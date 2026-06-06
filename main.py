@@ -6,6 +6,7 @@ import os
 
 API_ID = int(os.environ['TELEGRAM_API_ID'])
 API_HASH = os.environ['TELEGRAM_API_HASH']
+PHONE = os.environ['TELEGRAM_PHONE']
 N8N_WEBHOOK = os.environ['N8N_WEBHOOK_URL']
 SESSION_NAME = 'goal_englize_watcher'
 
@@ -59,10 +60,10 @@ async def poll_channels():
                 print(f"Error on channel {channel_id}: {e}")
 
 async def main():
-    await client.start()
+    await client.start(phone=PHONE)
     print("Goal Englize Watcher running...")
     while True:
         await poll_channels()
-        await asyncio.sleep(300)  # Every 5 minutes
+        await asyncio.sleep(300)
 
 asyncio.run(main())
