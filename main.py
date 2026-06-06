@@ -19,9 +19,13 @@ async def poll_channels():
         for channel_id in CHANNELS:
             try:
                 entity = await client.get_entity(int(channel_id))
-                history = await client(GetHistoryRequest(peer=entity,limit=10,offset_date=None,offset_id=0,max_id=0,min_id=last_seen[channel_id],add_offset=0,hash=0))
+                history = await client(GetHistoryRequest(
+                    peer=entity, limit=20, offset_date=None,
+                    offset_id=0, max_id=0, min_id=0,
+                    add_offset=0, hash=0
+                ))
                 new_msgs = [m for m in history.messages if m.id > last_seen[channel_id] and getattr(m,"text",None)]
-                print(f"[{entity.title}] {len(new_msgs)} new messages")
+                print(f"[{entity.title}] {len(new_msgs)} new messages (last_seen={last_seen[channel_id]}, latest={history.messages[0].id if history.messages else 0})")
                 for message in reversed(new_msgs):
                     payload = {"body":{"channel_id":channel_id,"channel_name":entity.title,"message_id":message.id,"text":message.text,"timestamp":message.date.isoformat(),"views":getattr(message,"views",0)}}
                     async with session.post(N8N_WEBHOOK, json=payload) as resp:
@@ -36,7 +40,10 @@ async def main():
     for channel_id in CHANNELS:
         try:
             entity = await client.get_entity(int(channel_id))
-            history = await client(GetHistoryRequest(peer=entity,limit=1,offset_date=None,offset_id=0,max_id=0,min_id=0,add_offset=0,hash=0))
+            history = await client(GetHistoryRequest(
+                peer=entity, limit=1, offset_date=None,
+                offset_id=0, max_id=0, min_id=0, add_offset=0, hash=0
+            ))
             if history.messages:
                 last_seen[channel_id] = history.messages[0].id
                 print(f"[INIT] {entity.title} from msg {last_seen[channel_id]}")
