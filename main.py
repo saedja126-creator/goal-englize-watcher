@@ -24,10 +24,24 @@ async def poll_channels():
                     offset_id=0, max_id=0, min_id=0,
                     add_offset=0, hash=0
                 ))
-                new_msgs = [m for m in history.messages if m.id > last_seen[channel_id] and getattr(m,"text",None)]
-                print(f"[{entity.title}] {len(new_msgs)} new messages (last_seen={last_seen[channel_id]}, latest={history.messages[0].id if history.messages else 0})")
+                new_msgs = [m for m in history.messages if m.id > last_seen[channel_id]]
+                text_msgs = [m for m in new_msgs if getattr(m,"text",None) or getattr(m,"message",None)]
+                print(f"[{entity.title}] {len(new_msgs)} new total, {len(text_msgs)} with text (last_seen={last_seen[channel_id]}, latest={history.messages[0].id if history.messages else 0})")
                 for message in reversed(new_msgs):
-                    payload = {"body":{"channel_id":channel_id,"channel_name":entity.title,"message_id":message.id,"text":message.text,"timestamp":message.date.isoformat(),"views":getattr(message,"views",0)}}
+                    text = getattr(message,"text",None) or getattr(message,"message",None)
+                    if not text:
+                        last_seen[channel_id] = message.id
+                        continue
+                    payload = {
+                        "body": {
+                            "channel_id": channel_id,
+                            "channel_name": entity.title,
+                            "message_id": message.id,
+                            "text": text,
+                            "timestamp": message.date.isoformat(),
+                            "views": getattr(message,"views",0)
+                        }
+                    }
                     async with session.post(N8N_WEBHOOK, json=payload) as resp:
                         print(f"[SENT] msg {message.id} from {entity.title} status {resp.status}")
                     last_seen[channel_id] = message.id
