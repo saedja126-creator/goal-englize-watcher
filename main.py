@@ -14,6 +14,8 @@ last_seen = {ch: 0 for ch in CHANNELS}
 client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
 
 async def poll_channels():
+    if not client.is_connected():
+        await client.connect()
     print("[POLL] Checking channels...")
     async with aiohttp.ClientSession() as session:
         for channel_id in CHANNELS:
