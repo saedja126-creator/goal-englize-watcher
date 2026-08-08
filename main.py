@@ -17,9 +17,11 @@ HOW THE PHOTO TRAVELS
 
 ENV
   TELEGRAM_API_ID, TELEGRAM_API_HASH, TELEGRAM_SESSION_STRING, N8N_WEBHOOK_URL
-  DRY_RUN=1        - print what would be sent, send nothing (local testing)
-  BACKFILL=N       - on boot, replay the last N messages per channel, then poll
-  MAX_PHOTO_MB     - skip photos larger than this (default 4)
+  DRY_RUN=1            - print what would be sent, send nothing (local testing)
+  BACKFILL=N           - on boot, replay the last N messages per channel, then poll
+  MAX_PHOTO_MB         - skip photos larger than this (default 4)
+  N8N_TIMEOUT_SECONDS  - how long to wait for n8n's response before giving up (default 90)
+  N8N_MAX_RETRIES      - retries on timeout/connection error before dropping the message (default 2)
 """
 
 import asyncio
@@ -67,6 +69,8 @@ N8N_WEBHOOK = os.environ.get("N8N_WEBHOOK_URL", "")
 DRY_RUN = os.environ.get("DRY_RUN") == "1"
 BACKFILL = int(os.environ.get("BACKFILL", "0"))
 MAX_PHOTO_BYTES = int(float(os.environ.get("MAX_PHOTO_MB", "4")) * 1024 * 1024)
+N8N_TIMEOUT_SECONDS = int(os.environ.get("N8N_TIMEOUT_SECONDS", "90"))
+N8N_MAX_RETRIES = int(os.environ.get("N8N_MAX_RETRIES", "2"))
 
 CHANNELS = ["-1001844702414", "-1001681413905", "-1001875447623"]
 
@@ -139,12 +143,21 @@ async def send_to_n8n(session, payload, message_id, title):
             message_id, len(p.get("text") or ""),
             ("%dx%d %dKB" % (ph["width"], ph["height"], ph["bytes"] // 1024)) if ph else "none"))
         return
-    try:
-        async with session.post(N8N_WEBHOOK, json=payload,
-                                timeout=aiohttp.ClientTimeout(total=30)) as resp:
-            print("  [SENT] msg %s from %s -> HTTP %s" % (message_id, title, resp.status))
-    except Exception as exc:
-        print("  [SEND ERROR] msg %s: %s" % (message_id, exc))
+
+    for attempt in range(1, N8N_MAX_RETRIES + 2):  # e.g. retries=2 -> attempts 1,2,3
+        try:
+            async with session.post(N8N_WEBHOOK, json=payload,
+                                    timeout=aiohttp.ClientTimeout(total=N8N_TIMEOUT_SECONDS)) as resp:
+                print("  [SENT] msg %s from %s -> HTTP %s (attempt %d)" % (
+                    message_id, title, resp.status, attempt))
+                return
+        except Exception as exc:
+            is_last = attempt == N8N_MAX_RETRIES + 1
+            label = "SEND ERROR" if is_last else "SEND RETRY"
+            print("  [%s] msg %s: attempt %d/%d failed: %r" % (
+                label, message_id, attempt, N8N_MAX_RETRIES + 1, exc))
+            if not is_last:
+                await asyncio.sleep(5 * attempt)
 
 
 async def handle_message(session, message, channel_id, title):
