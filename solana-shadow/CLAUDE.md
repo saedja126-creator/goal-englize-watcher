@@ -1,0 +1,44 @@
+# Solana shadow desk: instructions for a local Claude Code session
+
+You are running on the user's own PC, with normal internet access. A previous cloud session wrote this project but
+could NOT reach the market-data APIs, so the parsers are untested against real responses. Your job is to finish setup,
+verify against real data, and start the shadow run.
+
+## Hard rules
+- SHADOW MODE ONLY. Never place an order, never create or ask for a wallet, private key or seed phrase.
+- Secrets live only in `.env` (git-ignored). Never print, log, echo or commit a key. Ask the user to paste their
+  Helius key into `.env` themselves; do not have them paste it into chat.
+- Don't change thresholds in `thresholds.toml` without telling the user what and why.
+- Don't promise returns. The user is UK-based and thinks in GBP. Realistic framing: the shadow test measures whether the
+  rules have any edge; most likely outcome of a first version is flat to negative after costs.
+- Ask before installing anything system-wide (e.g. Python). Use a virtual environment for packages.
+
+## Steps
+1. Check `python --version` is 3.11+ (tomllib is required). If missing, tell the user how to install it.
+2. In `solana-shadow/`: `python -m venv .venv`, activate, `pip install -r requirements.txt`.
+3. Run `python -m unittest discover -s tests -v` (17 logic tests on synthetic data should pass).
+4. Copy `.env.example` to `.env`; ask the user to paste their free Helius key after `HELIUS_API_KEY=` and tell you when done.
+5. Run `python -m shadowbot doctor`. Read `samples/*.json` (real responses, no keys inside).
+6. Compare real shapes with the parsers in `shadowbot/sources.py` (GeckoTerminal new_pools, DexScreener
+   `tokens/v1/solana/{mints}`), `shadowbot/solana_rpc.py` (getAccountInfo jsonParsed, getTokenLargestAccounts) and
+   `shadowbot/optional_checks.py` (RugCheck, Jupiter). Fix any mismatch, then add a test that uses a trimmed real sample.
+7. Run `python -m shadowbot run --once`, check `data/shadow.db` has sensible rows, then start `python -m shadowbot run`
+   and tell the user to keep the PC awake while it runs.
+8. After a few hours, run `python -m shadowbot report` and explain Test A first (plumbing), in plain English.
+
+## Known unverified items (check these first)
+- GeckoTerminal new_pools: base token id format (`solana_<mint>`), `pool_created_at`, and how many pools per page vs how
+  fast new pools arrive (the report's discovery overlap number shows coverage gaps).
+- DexScreener `tokens/v1/solana/{addresses}`: returns a list of pairs; field names `pairCreatedAt`, `txns.m5`, `volume.m5/h1`,
+  `liquidity.usd`; rate limits.
+- Helius RPC URL format `https://mainnet.helius-rpc.com/?api-key=KEY`, and free-plan limits (credits per month).
+- Whether the "largest account = pool vault" assumption in `holder_concentration` holds for pump-style launches.
+- RugCheck summary fields and Jupiter quote params are optional and off by default.
+
+## Not built yet
+Dev-wallet %, LP lock/burn status (logged as missing, never treated as safe), the paper-trading executor with a live price
+loop and stop/trailing exits, one-position-at-a-time rule, Telegram digest. Build these only after shadow data justifies it.
+
+## Project map
+`shadowbot/funnel.py` stages and reason classes; `runner.py` one cycle; `report.py` Tests A/B/C; `thresholds.toml` all
+thresholds; `README.md` user-facing steps.

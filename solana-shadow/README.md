@@ -4,7 +4,16 @@ Scans new Solana pairs, filters them with hard facts in code, logs **every** dec
 and records what each token did afterwards. **It never trades and never touches a wallet.** The goal is to find out,
 with data and at no capital risk, whether the video's rules have any edge.
 
-## Setup (about 30 minutes)
+## Fastest route: let Claude Code on your PC do it
+
+Open Claude Code in an empty folder and paste:
+
+> Clone https://github.com/saedja126-creator/goal-englize-watcher, check out branch `claude/solana-shadow`, read
+> `solana-shadow/CLAUDE.md`, and follow it step by step.
+
+You only need a free Helius key. Paste it into the `.env` file yourself when asked, not into the chat.
+
+## Setup by hand (about 30 minutes)
 
 1. Install **Python 3.11 or newer** (python.org). On Windows tick "Add Python to PATH".
 2. Create a free **Helius** account (helius.dev) and copy your API key.
