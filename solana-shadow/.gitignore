@@ -1,0 +1,7 @@
+.env
+data/
+samples/
+reports/
+__pycache__/
+*.pyc
+.venv/

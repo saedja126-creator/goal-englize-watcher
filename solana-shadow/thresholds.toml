@@ -1,0 +1,67 @@
+# Every threshold lives here so it can be reviewed and changed without touching code.
+# Values are STARTING PROPOSALS to be calibrated from shadow data, not proven numbers.
+
+[scan]
+cycle_seconds = 30            # one loop = discover, evaluate due pools, update outcomes
+discovery_pages = 1           # GeckoTerminal new_pools pages per cycle (public limit is low)
+max_evals_per_cycle = 15      # caps DexScreener + RPC usage per cycle
+watch_max_age_minutes = 360   # stop watching a pool after this age
+no_data_give_up_minutes = 60  # stop if DexScreener never returns a pair for a mint
+daily_rpc_budget = 25000      # hard cap on Solana RPC calls per UTC day (free tiers are limited)
+
+[stage1_free_cut]             # uses data already in hand: costs nothing
+min_age_minutes = 2
+max_age_minutes = 360
+min_liquidity_usd = 5000
+min_txns_m5 = 5
+
+[stage2_onchain]              # facts in code: a comparison, never a judgment
+require_mint_authority_revoked = true
+require_freeze_authority_revoked = true
+reject_permanent_delegate = true
+max_top10_pct_ex_largest = 50       # top-10 holders excluding the single largest account (assumed LP vault)
+max_top_holder_pct_ex_largest = 20  # biggest non-LP holder
+
+[stage3_optional]             # off by default: field names and limits unverified until `doctor` runs
+rugcheck_enabled = false
+jupiter_sell_route_enabled = false
+jupiter_probe_usd = 50
+
+[strategy.new_pair_flow]      # video-style: new pair, buyers dominate flow
+min_age_minutes = 2
+max_age_minutes = 15
+min_buy_ratio_m5 = 0.70
+min_txns_m5 = 20
+min_liquidity_usd = 10000
+
+[strategy.volume_spike]       # video-style: volume spike on an older pair
+min_age_minutes = 15
+max_age_minutes = 360
+min_spike_mult = 3.0          # vol_m5 / (vol_h1 / 12)
+min_buy_ratio_m5 = 0.60
+min_txns_m5 = 20
+min_liquidity_usd = 10000
+
+[bench_minutes]               # how long a rejected pool stays benched, by reason
+RETRY_SHORT = 10
+RETRY_LONG = 120
+LOW_ACTIVITY = 5
+LOW_LIQUIDITY = 10
+NO_PAIR_DATA = 2
+RPC_ERROR = 2
+RPC_BUDGET = 30
+NO_SELL_ROUTE = 10
+reeval_after_pass = 30        # a passed pool is rechecked this often (strategies may trigger later)
+signal_cooldown = 60          # same strategy on the same token at most once per this many minutes
+
+[tracking]
+offsets_seconds = [30, 300, 900, 3600]   # +30s approximates entry delay; others are forward checkpoints
+rug_liquidity_drop = 0.80                # rugged if liquidity falls more than this vs reference
+rug_price_drop = 0.90                    # rugged if price falls more than this vs reference
+give_up_after_seconds = 900              # mark a checkpoint 'error' if data stays unavailable this long
+
+[report]
+friction_pct = 4.0            # assumed round-trip cost (slippage + fees) deducted from gross returns
+min_reject_rate = 0.50        # warn if fewer than this share of evaluated tokens is rejected
+max_reject_rate = 0.98        # warn if more than this (filter may be broken or data missing)
+min_signals_for_conclusion = 100
