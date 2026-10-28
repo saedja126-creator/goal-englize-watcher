@@ -23,10 +23,10 @@ Worst case of the whole plan: about £600 (£100 data plus the £500 cap).
 ## Phases, with gates
 
 ### Phase 0: today (week 0)
-- Update the PC (pull the branch), stop the visible scanner window, run `python -m shadowbot start`.
-- Run `doctor`; send back its output and `samples/` so the parsers are confirmed on real data.
-- Run `status` and send the Test A section of `report`.
-- **Done when:** `status` says RUNNING, `doctor` required checks pass, error rate under 5%, feature completeness over 95%.
+- Done on 27–28 Oct by Claude Code on the PC: real `doctor` run, parsers checked on real samples, doctor fixed, watchdog added.
+- Remaining: confirm the scanner runs in the background (`python -m shadowbot status`) and the watchdog task is installed.
+- Send the Test A section of `python -m shadowbot report` so it can be explained.
+- **Done when:** `status` says RUNNING, error rate under 5%, feature completeness over 95%, discovery overlap understood.
 
 ### Phase 1: shadow test (weeks 1–12)
 - The scanner runs continuously. The user reads **one weekly report** (Sunday evening UTC), about 30 minutes: summary, day-by-day,
@@ -77,8 +77,8 @@ Worst case of the whole plan: about £600 (£100 data plus the £500 cap).
 | Never invents numbers; labels everything verified or not | Never shares the Helius key in chat |
 
 ## Open items before Phase 1 is trustworthy
-1. Real `doctor` output and samples (parsers are unverified).
-2. Windows background mode check (`start`, `status`, `stop` once, then a reboot test).
+1. The first Test A report on real collected data (error rate, completeness, discovery coverage).
+2. Windows check: background mode, the watchdog scheduled task, and a reboot test.
 3. Live GBP/USD rate into `thresholds.toml` (`usd_per_gbp`).
 4. The three books (titles or cover photos).
 5. A free source for the Spy wallet list.

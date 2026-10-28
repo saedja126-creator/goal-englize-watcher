@@ -72,10 +72,14 @@ evenings UTC); **risk engine** (slice ladder, sizing caps, halts that persist, s
 See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 
 ## 8. State right now
-- The user's PC has been running a visible PowerShell scanner for about a day (older version). They want it hidden in the
-  background; I gave a message for Claude Code on their PC to pull the update, stop the visible window with Ctrl+C, and run `start`.
-- **I have not seen any real data.** The sandbox cannot reach the market APIs, so the parsers are unverified against real
-  responses until `doctor` runs on the PC and its output comes back.
+- Claude Code on the user's PC (commit `3ebfa20`, 28 Oct) ran `doctor` for real on 27 Oct, captured real GeckoTerminal,
+  DexScreener and RPC responses, fixed my doctor holder check (the RPC refuses wrapped SOL's millions of holders), added
+  `tests/test_real_samples.py`, and added a **watchdog** (`python -m shadowbot watch`: restarts a dead or stuck scanner; alerts by
+  PC pop-up and optional Telegram only if the restart fails; meant for a Windows scheduled task at login and every 15 minutes).
+  So the parsers are now checked against real response shapes.
+- The user has been running the scanner for about a day and asked for it to be hidden in the background. `start`, `status` and
+  `stop` exist; whether the PC is running in background mode with the watchdog task is unconfirmed.
+- **I have not seen any collected data, `status` output or report.** Coverage, error rates and the first weekly report are unreviewed.
 - Nothing trades. No wallet exists.
 
 ## 9. Other topics touched
