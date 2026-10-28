@@ -95,8 +95,9 @@ See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 
 ## 9b. A gap the user called out (28 Oct)
 The plan said "about £100 for paid data" and "£200 live" but never said what the money buys, where to pay, or where the
-trading money physically goes. The presentation and `PLAN.md` now have a money map: the £100 is a hard cap for one two-month
-data subscription (provider not chosen until month 3), and the live money goes into a separate burner Solana wallet funded from a
+trading money physically goes. The presentation and `PLAN.md` now have a money map: the £100 is a hard cap for two months (about £50 a
+month) of one wallet-labelling subscription, to test whether a paid wallet list beats the free rankings for the Spy strategy
+(provider not chosen until month 3; nothing is bought or scheduled before then), and the live money goes into a separate burner Solana wallet funded from a
 UK exchange (exchange and wallet app not chosen or verified until month 5).
 
 ## 10. Pending decisions and unanswered questions
