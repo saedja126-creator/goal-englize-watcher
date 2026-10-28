@@ -22,8 +22,10 @@ verify against real data, and start the shadow run.
 6. Compare real shapes with the parsers in `shadowbot/sources.py` (GeckoTerminal new_pools, DexScreener
    `tokens/v1/solana/{mints}`), `shadowbot/solana_rpc.py` (getAccountInfo jsonParsed, getTokenLargestAccounts) and
    `shadowbot/optional_checks.py` (RugCheck, Jupiter). Fix any mismatch, then add a test that uses a trimmed real sample.
-7. Run `python -m shadowbot run --once`, check `data/shadow.db` has sensible rows, then start `python -m shadowbot run`
-   and tell the user to keep the PC awake while it runs.
+7. Run `python -m shadowbot run --once`, check `data/shadow.db` has sensible rows, then start it with `python -m shadowbot start`
+   (background, no window; `status` and `stop` manage it; log in `data/run.log`). If a visible scanner window is already running
+   from an older version, stop it with Ctrl+C first, then `start`: state lives in SQLite, so nothing is lost. Tell the user to
+   keep the PC awake. The Windows branch of start/stop is untested: check it once with `status` and a test stop/start.
 8. After a few hours, run `python -m shadowbot report` and explain Test A first (plumbing), in plain English.
 9. Weekly: the run loop writes `reports/weekly-DATE.html` on Sunday evenings (UTC); `python -m shadowbot weekly` makes one on demand.
    Each week open it with the user and walk through it in plain English: day by day, then the scorecard, then the gates.

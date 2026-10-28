@@ -33,7 +33,12 @@ You only need a free Helius key. Paste it into the `.env` file yourself when ask
    It tests every API and saves raw sample responses to `samples/` (no keys inside). **If anything says FAIL, send me the
    output and the files in `samples/`.** The parsers were written without live access to these APIs, so this is the
    step that confirms them.
-6. Start the shadow run: `python -m shadowbot run` (leave it running; turn off computer sleep).
+6. Start the shadow run in the background (no window, survives closing PowerShell): `python -m shadowbot start`.
+   Check on it any time with `python -m shadowbot status` (is it running, when it last scanned, the latest log lines)
+   and stop it with `python -m shadowbot stop`. The log is `data/run.log`; crashes go to `data/run.err`.
+   (`python -m shadowbot run` still works if you want to watch it in a window. Only one scanner can run at a time.)
+   Turn off computer sleep while it runs. On Windows, in PowerShell: `powercfg /change standby-timeout-ac 0`.
+   The background mode survives closing the window, not a restart or log-off: run `start` again after a reboot.
 7. **Weekly report (the one to read):** every Sunday evening (UTC) the running scanner writes `reports/weekly-DATE.html`.
    Open it in your browser. You can also make one any time with `python -m shadowbot weekly` (add `--end 2026-11-08`
    for a specific week). It has a plain-English summary, a day-by-day table, a this-week vs last-week scorecard and a
