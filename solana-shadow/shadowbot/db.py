@@ -83,6 +83,13 @@ class DB:
         self.conn.commit()
         return cur.rowcount == 1
 
+    def is_known_mint(self, mint: str) -> bool:
+        return self.conn.execute("SELECT 1 FROM pools WHERE mint=? LIMIT 1", (mint,)).fetchone() is not None
+
+    def source_calls_since(self, source: str, since_ts: int) -> int:
+        row = self.conn.execute("SELECT COUNT(*) AS n FROM api_calls WHERE source=? AND ts>=?", (source, since_ts)).fetchone()
+        return int(row["n"])
+
     def due_pools(self, now: int, limit: int) -> list[sqlite3.Row]:
         return self.conn.execute(
             "SELECT * FROM pools WHERE status='WATCH' AND next_eval_ts<=? ORDER BY next_eval_ts LIMIT ?",

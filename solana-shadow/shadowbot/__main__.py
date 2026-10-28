@@ -4,7 +4,7 @@ import signal
 import sys
 import time
 
-from . import background, config
+from . import background, config, discovery_log
 from .db import DB
 from .doctor import run_doctor
 from .http import Http, scrub
@@ -61,7 +61,8 @@ def cmd_run(args) -> int:
             try:
                 s = run_cycle(db, http, rpc, cfg, log=say)
                 say(f"discovered {s['discovered']} new {s['new']} evaluated {s['evaluated']} "
-                    f"decisions {s['decisions']} outcomes {s['outcomes']}")
+                    f"decisions {s['decisions']} outcomes {s['outcomes']} pages {s['pages']}")
+                discovery_log.append(int(started), s)
             except Exception as exc:  # keep the desk alive; the error is logged, not hidden
                 say(f"[cycle error] {scrub(repr(exc))}")
             if time.time() - last_report > 3600:
@@ -209,6 +210,22 @@ def cmd_watch(args) -> int:
     return run_watchdog(get_status, restart=lambda: background.start(args.db))
 
 
+def cmd_compare(args) -> int:
+    from . import compare
+    cfg = config.load_thresholds()
+    db_path = args.db or config.DEFAULT_DB
+    min_liq = float(cfg["strategy"]["new_pair_flow"]["min_liquidity_usd"])
+    http = Http(None)  # no database logging: this check writes nothing to shadow.db
+    if args.report:
+        known = compare.load_known()
+        started = min((t["seen_ts"] for t in known.values()), default=int(time.time()))
+        print(compare.report_now(db_path, http, started, 0, 0, min_liq))
+        return 0
+    print(f"Comparing for {args.hours} hours (Ctrl+C ends early and still reports). Read-only: no orders, no database writes.")
+    print(compare.run_compare(db_path, http, args.hours, args.poll, min_liq))
+    return 0
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="shadowbot", description="Shadow-mode Solana scanner. Never trades.")
     p.add_argument("--db", help="path to the SQLite file (default data/shadow.db)")
@@ -230,7 +247,13 @@ def main(argv=None) -> int:
     sub.add_parser("status", help="is it running, when did it last scan, and the latest log lines")
     wd = sub.add_parser("watch", help="check the scanner, restart it if needed, alert only if that fails")
     wd.add_argument("--test-alert", action="store_true", help="send a harmless test alert and exit")
+    cp = sub.add_parser("compare", help="one-off: compare our discovered tokens with Jupiter's new-token list")
+    cp.add_argument("--hours", type=float, default=3.0, help="how long to collect before reporting (default 3)")
+    cp.add_argument("--poll", type=int, default=20, help="seconds between Jupiter calls (default 20)")
+    cp.add_argument("--report", action="store_true", help="report on what was already collected; make no new calls to Jupiter")
     args = p.parse_args(argv)
+    if args.cmd == "compare":
+        return cmd_compare(args)
     if args.cmd == "watch":
         return cmd_watch(args)
     if args.cmd == "start":

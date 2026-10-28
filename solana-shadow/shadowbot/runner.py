@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from . import funnel, tracker
 from .http import ApiError
-from .sources import discover_new_mints, fetch_pairs, pair_to_features
+from .sources import GECKO_SOFT_LIMIT_PER_MIN, discover_adaptive, fetch_pairs, pair_to_features
 
 
 def utc_midnight(now: int) -> int:
@@ -65,12 +65,16 @@ def apply_verdict(db, pool, f: dict, v: funnel.Verdict, now: int, cfg: dict) -> 
 
 def run_cycle(db, http, rpc, cfg: dict, now: int | None = None, log=print) -> dict:
     now = now or int(time.time())
-    stats = {"discovered": 0, "new": 0, "evaluated": 0, "decisions": 0, "outcomes": 0}
+    stats = {"discovered": 0, "new": 0, "evaluated": 0, "decisions": 0, "outcomes": 0,
+             "pages": 0, "needed_extra": False, "hit_limit": False, "stopped": None}
 
-    # 1. discovery
+    # 1. discovery (extra pages only while a page has no token we have seen before)
     overlap = None
     try:
-        found = discover_new_mints(http, cfg["scan"]["discovery_pages"])
+        found, info = discover_adaptive(
+            http, db.is_known_mint, cfg["scan"]["discovery_pages"],
+            may_fetch_more=lambda: db.source_calls_since("gecko", now - 60) < GECKO_SOFT_LIMIT_PER_MIN)
+        stats.update(info)
         stats["discovered"] = len(found)
         fresh = sum(1 for d in found if db.add_pool_if_new(d["mint"], d["pair_address"], d["symbol"], now))
         stats["new"] = fresh

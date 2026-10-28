@@ -10,6 +10,7 @@ import math
 import statistics as st
 from datetime import date, datetime, timedelta, timezone
 
+from . import discovery_log
 from .report import _outcome_rows, _pct, _table
 
 DAY = 86400
@@ -87,6 +88,7 @@ def period(db, cfg: dict, since: int, until: int, now: int) -> dict:
     top = db.conn.execute(
         "SELECT check_fired c, COUNT(*) n FROM decisions WHERE decision='FILTERED' AND ts>=? AND ts<? "
         "GROUP BY check_fired ORDER BY n DESC LIMIT 1", (since, until)).fetchone()
+    disc = discovery_log.summary(since, until)
     nf, rf, mf = _rug(db, cfg, since, until, "d.decision='FILTERED' AND d.stage IN ('S2_ONCHAIN','S3_OPTIONAL')")
     npass, rpass, mpass = _rug(db, cfg, since, until, "d.decision IN ('PASS','SIGNAL')")
     total = v["passed"] + v["rejected"]
@@ -94,6 +96,7 @@ def period(db, cfg: dict, since: int, until: int, now: int) -> dict:
         **v, "signals": sig_rows, "api_calls": api["n"], "api_errors": api["e"],
         "api_error_rate": (api["e"] / api["n"]) if api["n"] else None,
         "uptime": uptime, "top_reason": (top["c"], top["n"]) if top else None,
+        "disc_cycles": disc["cycles"], "disc_extra": disc["needed_extra"], "disc_limit": disc["hit_limit"],
         "reject_rate": (v["rejected"] / total) if total else None,
         "rug_filtered": (rf / nf) if nf else None, "n_filtered": nf,
         "rug_passed": (rpass / npass) if npass else None, "n_passed": npass,
@@ -148,6 +151,10 @@ def reading(data: dict, cfg: dict) -> list[str]:
     if w["uptime"] is not None and w["uptime"] < 0.8:
         out.append(f"The scanner ran only {_pct(w['uptime'], 0)} of the week. Check the PC's sleep settings; gaps mean "
                    "missed tokens.")
+    if w["disc_limit"] > 0:
+        n = w["disc_limit"]
+        out.append(f"On {n} scan{'s' if n != 1 else ''} even 3 pages of new tokens had nothing we had seen before, so some "
+                   "tokens may have been missed in those bursts.")
     if w["api_error_rate"] is not None and w["api_error_rate"] > 0.05:
         out.append(f"Data sources failed on {_pct(w['api_error_rate'])} of calls (target under 5%).")
     if w["reject_rate"] is not None and w["evaluated"] >= 30:
@@ -208,9 +215,17 @@ def scorecard_rows(data: dict) -> list[list[str]]:
         r("Data-source error rate", "api_error_rate", pct),
         r("Scanner uptime", "uptime", pct),
     ]
+    rows.append(["Scans that needed extra discovery pages"] + [_disc_cell(x, "disc_extra") for x in (w, p, a)])
+    rows.append(["Scans that hit the 3-page limit"] + [_disc_cell(x, "disc_limit") for x in (w, p, a)])
     rows.append(["Signals vs control after costs (15 min)",
                  _edge_cell(w["edge"]), _edge_cell(p["edge"]), _edge_cell(a["edge"])])
     return rows
+
+
+def _disc_cell(d: dict, key: str) -> str:
+    if not d["disc_cycles"]:
+        return "n/a"
+    return f"{d[key]} of {d['disc_cycles']} ({_pct(d[key] / d['disc_cycles'])})"
 
 
 def _edge_cell(e: dict) -> str:

@@ -15,6 +15,9 @@ DEX_TOKENS = "https://api.dexscreener.com/tokens/v1/solana/{addresses}"
 USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 QUOTE_MINTS = {WSOL_MINT, USDC_MINT}
 DEX_CHUNK = 30
+MAX_DISCOVERY_PAGES = 3          # extra pages are read only when a page shows no token we have seen
+GECKO_SOFT_LIMIT_PER_MIN = 8     # GeckoTerminal's published free limit is 30/min (one third-party source says ~10);
+                                 # extra pages are skipped when our own last minute already used this many calls
 
 
 def _strip_prefix(token_id: str | None) -> str | None:
@@ -47,6 +50,48 @@ def discover_new_mints(http, pages: int = 1) -> list[dict]:
         payload = http.get("gecko", GECKO_NEW_POOLS, params={"page": page})
         found.extend(parse_gecko_new_pools(payload))
     return found
+
+
+def discover_adaptive(http, is_known, base_pages: int = 1, max_pages: int = MAX_DISCOVERY_PAGES,
+                      may_fetch_more=lambda: True) -> tuple[list[dict], dict]:
+    """New pools, reading further pages only while a page shows no token we have seen before.
+
+    A page with zero overlap means the 20-pool window may have rolled past tokens we never fetched, so the next
+    page is read, up to `max_pages`. Returns (found, info). info: pages (fetched OK), needed_extra (the first page
+    had no overlap), hit_limit (no overlap even on the last allowed page), stopped (why extra pages ended early:
+    'rate_guard', 'error', or None). Page 1 failing raises ApiError as before; a later page failing keeps what we have.
+    """
+    from .http import ApiError
+    max_pages = max(max_pages, base_pages)
+    found: list[dict] = []
+    seen: set[str] = set()
+    info = {"pages": 0, "needed_extra": False, "hit_limit": False, "stopped": None}
+    for page in range(1, max_pages + 1):
+        if page > 1 and not may_fetch_more():
+            info["stopped"] = "rate_guard"
+            break
+        try:
+            payload = http.get("gecko", GECKO_NEW_POOLS, params={"page": page})
+        except ApiError:
+            if page == 1:
+                raise
+            info["stopped"] = "error"
+            break
+        info["pages"] = page
+        items = parse_gecko_new_pools(payload)
+        for d in items:
+            if d["mint"] not in seen:
+                seen.add(d["mint"])
+                found.append(d)
+        if page < base_pages:
+            continue
+        if not items or any(is_known(d["mint"]) for d in items):
+            break
+        if page == base_pages:
+            info["needed_extra"] = True
+        if page == max_pages:
+            info["hit_limit"] = True
+    return found, info
 
 
 def _num(x) -> float | None:

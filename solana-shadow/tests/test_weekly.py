@@ -1,4 +1,5 @@
 """Weekly report tests on SYNTHETIC log data."""
+import os
 import sys
 import tempfile
 import unittest
@@ -56,6 +57,12 @@ def populated() -> DB:
 
 class TestWeekly(unittest.TestCase):
     def setUp(self):
+        tmp = tempfile.TemporaryDirectory()  # keep the real data/discovery_pages.jsonl out of these tests
+        self.addCleanup(tmp.cleanup)
+        patch = mock.patch.dict(os.environ, {"SHADOWBOT_DATA_DIR": tmp.name})
+        patch.start()
+        self.addCleanup(patch.stop)
+        self.tmp = Path(tmp.name)
         self.db = populated()
         self.data = collect(self.db, CFG, END, NOW)
 
@@ -122,6 +129,28 @@ class TestWeekly(unittest.TestCase):
         self.assertIn("reports/weekly-2026-11-08.html", text)
         self.assertIn("Signals logged: 30 of 200 wanted", text)
         self.assertLess(len(text), 1200)
+
+    def test_discovery_page_rows_count_extra_pages_and_limit_hits(self):
+        from shadowbot import discovery_log
+        for i in range(10):
+            discovery_log.append(D1 + i * 30, {"pages": 1})
+        discovery_log.append(D1 + 400, {"pages": 2, "needed_extra": True})
+        discovery_log.append(D1 + 430, {"pages": 3, "needed_extra": True, "hit_limit": True})
+        data = collect(self.db, CFG, END, NOW)
+        self.assertEqual((data["week"]["disc_cycles"], data["week"]["disc_extra"], data["week"]["disc_limit"]), (12, 2, 1))
+        md, page, _ = build_weekly(self.db, CFG, end=END, now=NOW)
+        rows = {ln.split("|")[1].strip(): ln for ln in md.splitlines() if ln.startswith("| ")}
+        self.assertIn("2 of 12 (16.7%)", rows["Scans that needed extra discovery pages"])
+        self.assertIn("1 of 12 (8.3%)", rows["Scans that hit the 3-page limit"])
+        self.assertIn("Scans that hit the 3-page limit", page)
+        self.assertIn("On 1 scan even 3 pages of new tokens", " ".join(reading(data, CFG)))
+
+    def test_discovery_page_rows_say_n_a_before_any_data(self):
+        md, _, _ = build_weekly(self.db, CFG, end=END, now=NOW)
+        rows = {ln.split("|")[1].strip(): [c.strip() for c in ln.split("|")[2:5]] for ln in md.splitlines() if ln.startswith("| ")}
+        self.assertEqual(rows["Scans that hit the 3-page limit"], ["n/a", "n/a", "n/a"])
+        self.assertEqual(rows["Scans that needed extra discovery pages"], ["n/a", "n/a", "n/a"])
+        self.assertNotIn("3 pages of new tokens", " ".join(reading(self.data, CFG)))
 
     def test_cli_writes_both_files(self):
         with tempfile.TemporaryDirectory() as tmp:
