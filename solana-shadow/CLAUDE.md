@@ -1,6 +1,6 @@
 # Solana shadow desk: instructions for a local Claude Code session
 
-> **Current state and plan: read `docs/FINAL_SUMMARY.md` first.** The setup steps below were written before the real-sample check; the summary is newer (57 tests, watchdog, weekly Telegram notice, risk preset B applied: 10% position, up to 2% risk, 15% daily limit capped at £30).
+> **Current state and plan: read `docs/FINAL_SUMMARY.md` first.** The setup steps below were written before the real-sample check; the summary is newer (79 tests, watchdog, weekly Telegram notice, risk preset B applied: 10% position, up to 2% risk, 15% daily limit capped at £30).
 
 You are running on the user's own PC, with normal internet access. A previous cloud session wrote this project but
 could NOT reach the market-data APIs, so the parsers are untested against real responses. Your job is to finish setup,
@@ -18,7 +18,7 @@ verify against real data, and start the shadow run.
 ## Steps
 1. Check `python --version` is 3.11+ (tomllib is required). If missing, tell the user how to install it.
 2. In `solana-shadow/`: `python -m venv .venv`, activate, `pip install -r requirements.txt`.
-3. Run `python -m unittest discover -s tests -v` (all tests should pass: 57 at last count).
+3. Run `python -m unittest discover -s tests -v` (all tests should pass: 79 at last count).
 4. Copy `.env.example` to `.env`; ask the user to paste their free Helius key after `HELIUS_API_KEY=` and tell you when done.
 5. Run `python -m shadowbot doctor`. Read `samples/*.json` (real responses, no keys inside).
 6. Compare real shapes with the parsers in `shadowbot/sources.py` (GeckoTerminal new_pools, DexScreener

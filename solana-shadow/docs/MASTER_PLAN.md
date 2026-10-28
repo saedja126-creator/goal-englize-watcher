@@ -49,7 +49,8 @@ holds every slide's content as text.
 | When | Action | Who | Done when |
 |---|---|---|---|
 | **Wed 28 Oct 2026** | Run `python -m shadowbot status`. If it does not say RUNNING, run `python -m shadowbot start` | You, or Claude Code on your PC | Status says RUNNING and "last scan cycle" is under 2 minutes ago |
-| **Wed 28 Oct** | Update the code: `git pull` on branch `claude/solana-shadow`, run the tests, restart the scanner. This adds the weekly Telegram notice | Claude Code on your PC | 57 tests pass; `status` says RUNNING |
+| **Wed 28 Oct** | Update the code: `git pull` on branch `claude/solana-shadow`, run the tests, restart the scanner. This adds the weekly Telegram notice | Claude Code on your PC | 79 tests pass; `status` says RUNNING |
+| **Wed 28 Oct, about 23:25 UTC** | The 3-hour `compare` check finishes. Read `reports/compare-*.md`: did the scanner miss tradable tokens? | Claude Code, then explain to the user | Missed-token count known; decide whether more is needed |
 | **By Fri 30 Oct** | *Optional:* set up Telegram alerts (steps in section 6) | You with Claude Code | A test message arrives on your phone |
 | **Sun 1 Nov, evening UTC** | First weekly report arrives (week 1, Mon 26 Oct to Sun 1 Nov). Expect "too early to conclude" | The scanner | `reports/weekly-2026-11-01.html` exists (and a Telegram notice if set up) |
 | **Mon 2 Nov** | Send the headline lines of the report to the assistant for a plain-English explanation | You | Explained |
@@ -260,10 +261,10 @@ positions make wins and losses bigger in the same proportion; only the win rate 
 
 | Built | Not yet verified | Not built yet |
 |---|---|---|
-| Scanner, filters, logger; outcome tracker; weekly report; risk engine and slice ladder; background mode and watchdog; weekly Telegram notice (28 Oct); 57 tests including real API samples captured 27 Oct | Whether it keeps up with new tokens (coverage); Windows background mode over several days; API prices and limits (third-party snippets); the live GBP/USD rate; accuracy of any wallet-data provider | Paper-trading executor; Spy strategy; paid-data A/B arm; dev-wallet % and LP-lock checks; Calendar reminders; loss-limit alerts |
+| Scanner, filters, logger; outcome tracker; weekly report; risk engine and slice ladder; background mode and watchdog; weekly Telegram notice (28 Oct); 79 tests including real API samples captured 27 Oct | Whether it keeps up with new tokens (coverage); Windows background mode over several days; API prices and limits (third-party snippets); the live GBP/USD rate; accuracy of any wallet-data provider | Paper-trading executor; Spy strategy; paid-data A/B arm; dev-wallet % and LP-lock checks; Calendar reminders; loss-limit alerts |
 
 On 27 Oct, Claude Code on the user's PC ran the real `doctor` check, captured real GeckoTerminal, DexScreener and RPC responses, fixed
-the holder check, and added the watchdog. **Nobody has yet reviewed the collected data, `status` output or a weekly report.**
+the holder check, and added the watchdog. On 28 Oct it also confirmed the scanner has run since 27 Oct 22:49 and fixed a discovery gap (see `docs/FINAL_SUMMARY.md` section 2). **Nobody has yet reviewed the collected data, `status` output or a weekly report.**
 
 ---
 
@@ -296,6 +297,7 @@ the holder check, and added the watchdog. **Nobody has yet reviewed the collecte
 | `python -m shadowbot risk-status` | Paper and live risk state, halts, step-up eligibility |
 | `python -m shadowbot stepup [--confirm]` | Show or apply a step-up |
 | `python -m shadowbot doctor` | Check setup and every API; saves samples |
+| `python -m shadowbot compare [--hours N]` | One-off coverage check: compares our discovered tokens with Jupiter's new-token list; writes `reports/compare-DATE.md` |
 | `python -m unittest discover -s tests -v` | Run the tests |
 
 Files on the PC: `data/shadow.db` (all state), `data/run.log`, `data/run.err`, `reports/`, `samples/`, `.env` (keys, git-ignored).

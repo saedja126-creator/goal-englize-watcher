@@ -19,7 +19,7 @@ It **never trades, has no wallet, and never asks for a private key.**
 | `doctor` command (checks every API, saves samples) | Yes | Run for real on the PC (27 Oct) | Fixed 28 Oct: the holder check now tests a brand-new token, because the RPC refuses wrapped SOL (millions of holders) |
 | Watchdog (`python -m shadowbot watch`) | Yes (built by Claude Code on the PC) | Unit tests | Restarts a dead or stuck scanner; alerts by PC pop-up and optional Telegram only if the restart fails; meant for a Windows scheduled task at login and every 15 minutes |
 | Weekly report (Markdown + HTML) | Yes | Synthetic data | Not seen on real data yet |
-| Risk engine (slice ladder, halts, step-up rule; preset B applied 28 Oct: 10% position, up to 2% risk, 15% daily limit capped at £30) | Yes | Unit tests (57 total) | Not connected to any executor yet |
+| Risk engine (slice ladder, halts, step-up rule; preset B applied 28 Oct: 10% position, up to 2% risk, 15% daily limit capped at £30) | Yes | Unit tests (79 total) | Not connected to any executor yet |
 | Background mode (`start`, `status`, `stop`) | Yes | Linux tests pass | **Windows branch untested** |
 | Presentation (23 slides) | Yes | Standalone copy rendered and checked | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 ; offline copy: `docs/Shadow_Desk_presentation.html` |
 | Paper-trading executor | **No** | | Next phase |
