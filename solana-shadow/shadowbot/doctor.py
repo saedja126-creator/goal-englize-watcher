@@ -54,12 +54,14 @@ def run_doctor() -> int:
         ok &= _line(FAIL, "DexScreener pairs", str(exc))
 
     # GeckoTerminal
+    new_mint = None
     try:
         payload = http.get("gecko", GECKO_NEW_POOLS, params={"page": 1})
         _save("gecko_new_pools", payload)
         parsed = parse_gecko_new_pools(payload)
         ok &= _line(OK if parsed else FAIL, "GeckoTerminal new pools", f"{len(parsed)} pools parsed" if parsed else "0 parsed; see samples/gecko_new_pools.json")
         if parsed:
+            new_mint = parsed[0]["mint"]
             print(f"        newest: {parsed[0]['symbol']} {parsed[0]['mint']} created {parsed[0]['created_at']}")
     except ApiError as exc:
         ok &= _line(FAIL, "GeckoTerminal new pools", str(exc))
@@ -73,9 +75,13 @@ def run_doctor() -> int:
             info = rpc.mint_info(config.WSOL_MINT)
             _save("rpc_mint_info_wsol", info)
             ok &= _line(OK, "Solana RPC getAccountInfo(jsonParsed)", f"decimals {info['decimals']}, extensions {info['extensions']}")
-            amounts = rpc.largest_accounts(config.WSOL_MINT)
-            _save("rpc_largest_accounts_wsol", amounts)
-            ok &= _line(OK if amounts else FAIL, "Solana RPC getTokenLargestAccounts", f"{len(amounts)} accounts")
+            # Wrapped SOL has millions of holders, so the RPC refuses it; test on a brand-new token instead.
+            if new_mint:
+                amounts = rpc.largest_accounts(new_mint)
+                _save("rpc_largest_accounts_new_token", amounts)
+                ok &= _line(OK if amounts else FAIL, "Solana RPC getTokenLargestAccounts (newest token)", f"{len(amounts)} accounts")
+            else:
+                _line(SKIP, "Solana RPC getTokenLargestAccounts", "no new token found to test on")
         except ApiError as exc:
             ok &= _line(FAIL, "Solana RPC", scrub(str(exc)))
     else:

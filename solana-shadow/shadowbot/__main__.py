@@ -12,6 +12,7 @@ from .report import build_report
 from .risk import RiskEngine, limits_table
 from .runner import run_cycle
 from .solana_rpc import Rpc
+from .watchdog import notify, run_watchdog
 from .weekly import build_weekly
 
 
@@ -185,6 +186,23 @@ def cmd_stepup(args) -> int:
     return 0
 
 
+def cmd_watch(args) -> int:
+    config.load_env()
+    if args.test_alert:
+        notify("Shadow scanner TEST alert", "This is only a test. The scanner is fine.", popup=True)
+        print("Test alert sent (pop-up on this PC, plus Telegram if it is set up in .env).")
+        return 0
+
+    def get_status():
+        db = _open(args.db)
+        try:
+            return background.status(db)
+        finally:
+            db.close()
+
+    return run_watchdog(get_status, restart=lambda: background.start(args.db))
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="shadowbot", description="Shadow-mode Solana scanner. Never trades.")
     p.add_argument("--db", help="path to the SQLite file (default data/shadow.db)")
@@ -204,7 +222,11 @@ def main(argv=None) -> int:
     sub.add_parser("start", help="start the scanner in the background (no window)")
     sub.add_parser("stop", help="stop the background scanner")
     sub.add_parser("status", help="is it running, when did it last scan, and the latest log lines")
+    wd = sub.add_parser("watch", help="check the scanner, restart it if needed, alert only if that fails")
+    wd.add_argument("--test-alert", action="store_true", help="send a harmless test alert and exit")
     args = p.parse_args(argv)
+    if args.cmd == "watch":
+        return cmd_watch(args)
     if args.cmd == "start":
         return cmd_start(args)
     if args.cmd == "stop":
