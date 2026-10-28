@@ -100,6 +100,16 @@ month) of one wallet-labelling subscription, to test whether a paid wallet list 
 (provider not chosen until month 3; nothing is bought or scheduled before then), and the live money goes into a separate burner Solana wallet funded from a
 UK exchange (exchange and wallet app not chosen or verified until month 5).
 
+## 9c. Change of strategy on paid data (28 Oct)
+The user asked why not start with something cheaper and move to the £50 option later, and asked for the best choice by search.
+Research (all third-party review sites, vendor-authored in places, **none tested data accuracy**): Nansen has a Free tier and one Pro
+plan, $69 a month paid monthly or $49 billed annually, strongest for entity labels, slowest for live watching (about 30 s); Birdeye
+Pro about $9 a month (wallet profit-and-loss, algorithmic top-trader lists, partial PnL, no copy trading; its data API is priced
+separately); Cielo free for 10 Solana wallets, Pro about $59, best for alerts; GMGN free (1% per trade if trading through it),
+the most-cited place to find smart-money wallets. Helius is infrastructure, not a wallet-quality product. Decision: a **ladder**:
+free first, then Birdeye Pro for month 1, then Nansen Pro for month 2 only if month 1 helped but was too limited. Worst case about
+£58 under the £100 cap; stop at about £7 if rung 1 shows nothing.
+
 ## 10. Pending decisions and unanswered questions
 1. Run the update on the PC and send back `python -m shadowbot status` and the Test A section of `report`.
 2. Send the three book titles (or cover photos).
