@@ -75,3 +75,19 @@ paper-trading phase. Until 100+ signals exist the report says so; even then 100 
 - Free-tier limits: the RPC budget is capped by `daily_rpc_budget`. Check your Helius plan limits on their site.
 - Discovery uses a feed that returns only the newest pools per call, so coverage of brand-new tokens may be incomplete.
   The report shows the overlap number so you can see whether that is happening.
+
+## The slice ladder (how money is controlled later)
+
+Live money, when it comes, goes through `shadowbot/risk.py`. The numbers live in `thresholds.toml` under `[risk]`:
+slice steps in pounds (200, 350, 500, 1000), 7% maximum position, 1% risk per trade, 5% daily loss limit, 30% project stop,
+position capped at 1% of the pool's liquidity, one position at a time.
+
+- `python -m shadowbot slices` prints the ladder in pounds (the same table as the presentation).
+- `python -m shadowbot risk-status` shows paper and live state, any halt, and whether a step-up is allowed.
+- `python -m shadowbot stepup` shows why you can't step up yet; `--confirm` applies it, only if the rule passes
+  (4+ live weeks, 30+ trades, stop never touched, live average trade positive and within 3 points of paper).
+- A daily-loss or project-stop halt **stays on until you reset it**. A restart or a new day does not clear it.
+- Set `usd_per_gbp` in `[risk]` to the live rate; it is only used for the pool-liquidity cap.
+
+Nothing places orders yet. The paper trading executor (next phase) must call `RiskEngine.allow_order` before every order.
+

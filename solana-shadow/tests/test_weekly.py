@@ -109,7 +109,9 @@ class TestWeekly(unittest.TestCase):
         self.assertIn("Sat 07 Nov", page)
 
     def test_empty_database_still_produces_a_report(self):
-        md, page, _ = build_weekly(DB(":memory:"), CFG, end=END, now=NOW)
+        empty = DB(":memory:")
+        md, page, _ = build_weekly(empty, CFG, end=END, now=NOW)
+        empty.close()
         self.assertIn("Too early to conclude", md)
         self.assertIn("<table>", page)
 

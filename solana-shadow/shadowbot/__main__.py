@@ -7,6 +7,7 @@ from .db import DB
 from .doctor import run_doctor
 from .http import Http, scrub
 from .report import build_report
+from .risk import RiskEngine, limits_table
 from .runner import run_cycle
 from .solana_rpc import Rpc
 from .weekly import build_weekly
@@ -87,6 +88,53 @@ def cmd_weekly(args) -> int:
     return 0
 
 
+def cmd_slices(args) -> int:
+    cfg = config.load_thresholds()
+    r = cfg["risk"]
+    print(f"Slice ladder in pounds (settings from thresholds.toml). Not forecasts: good month {r['illustrative_good_month_pct']}% "
+          f"and first-months range {r['illustrative_first_months_range_pct']}% are illustrative.\n")
+    print(f"{'Live slice':>10} | {'Per trade':>9} | {'Daily limit':>11} | {'Project stop':>12} | {'Good month':>12} | First live months")
+    up = lambda v: int(v + 0.5)  # round half up, so £24.5 reads £25 like the presentation  # noqa: E731
+    for x in limits_table(cfg):
+        print(f"{'£%d' % up(x['slice']):>10} | {'£%d' % up(x['per_trade']):>9} | {'£%d' % up(x['daily_limit']):>11} | "
+              f"{'£%d' % up(x['project_stop']):>12} | {'£%d-%d' % (up(x['good_low']), up(x['good_high'])):>12} | "
+              f"-£{up(-x['range_low'])} to +£{up(x['range_high'])}")
+    return 0
+
+
+def cmd_risk(args) -> int:
+    cfg = config.load_thresholds()
+    db = _open(args.db)
+    for mode in ("paper", "live"):
+        e = RiskEngine(db, cfg, mode=mode)
+        s = e.s
+        print(f"[{mode}] slice £{cfg['risk']['slice_steps'][s['slice_index']]} | equity £{s['equity']:.2f} | "
+              f"open positions {s['open_positions']} | halted: {s['halted'] or 'no'}")
+    rep = RiskEngine(db, cfg, mode="live").stepup_report()
+    print("\nStep-up:", "ELIGIBLE" if rep["eligible"] else "not eligible")
+    for why in rep["reasons"]:
+        print(" -", why)
+    db.close()
+    return 0
+
+
+def cmd_stepup(args) -> int:
+    cfg = config.load_thresholds()
+    db = _open(args.db)
+    engine = RiskEngine(db, cfg, mode="live")
+    out = engine.stepup(confirm=args.confirm, equity_after_topup=args.equity)
+    if out["applied"]:
+        print(f"Stepped up to a £{out['next_slice']:.0f} slice. Make sure the account really holds that amount.")
+    elif out["eligible"]:
+        print(f"Eligible for the next step (£{out['next_slice']:.0f}). Nothing changed: add --confirm to apply it.")
+    else:
+        print("Not eligible yet:")
+        for why in out["reasons"]:
+            print(" -", why)
+    db.close()
+    return 0
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="shadowbot", description="Shadow-mode Solana scanner. Never trades.")
     p.add_argument("--db", help="path to the SQLite file (default data/shadow.db)")
@@ -98,7 +146,18 @@ def main(argv=None) -> int:
     rep.add_argument("--hours", type=float, help="only the last N hours")
     wk = sub.add_parser("weekly", help="write the weekly report (markdown and HTML) to reports/")
     wk.add_argument("--end", help="last day of the week as YYYY-MM-DD (default: today, UTC)")
+    sub.add_parser("slices", help="print the slice ladder: per-trade size, stops and limits in pounds")
+    sub.add_parser("risk-status", help="show risk state (paper and live) and step-up eligibility")
+    su = sub.add_parser("stepup", help="move the live slice up one step (needs eligibility AND --confirm)")
+    su.add_argument("--confirm", action="store_true", help="actually apply the step-up")
+    su.add_argument("--equity", type=float, help="account value after you top up (default: the new slice size)")
     args = p.parse_args(argv)
+    if args.cmd == "slices":
+        return cmd_slices(args)
+    if args.cmd == "risk-status":
+        return cmd_risk(args)
+    if args.cmd == "stepup":
+        return cmd_stepup(args)
     if args.cmd == "doctor":
         return run_doctor()
     if args.cmd == "run":

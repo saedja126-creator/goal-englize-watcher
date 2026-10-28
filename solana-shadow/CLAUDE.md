@@ -48,3 +48,11 @@ loop and stop/trailing exits, one-position-at-a-time rule, Telegram digest. Buil
 ## Project map
 `shadowbot/funnel.py` stages and reason classes; `runner.py` one cycle; `report.py` Tests A/B/C; `thresholds.toml` all
 thresholds; `README.md` user-facing steps.
+
+## Risk engine (built, not yet connected to any executor)
+`shadowbot/risk.py` holds the slice ladder, hard limits and step-up rule (settings in `[risk]`). When the paper executor is
+built it MUST call `RiskEngine.allow_order(...)` before every order and `on_open`/`on_close` around every trade, in `paper`
+mode first. Never bypass it, never auto-reset a halt, and never raise the slice without the user typing
+`python -m shadowbot stepup --confirm`. Paid data (about 2 months from the 15th of the first paper month) is a controlled
+A/B: run a free-data arm and a free-plus-paid arm on the same tokens, and compare after costs.
+

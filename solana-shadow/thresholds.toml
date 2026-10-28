@@ -70,3 +70,21 @@ min_signals_for_conclusion = 100
 min_n_per_week = 20           # signals and controls needed in a week before it counts as "positive" or "not positive"
 target_signals = 200          # signals wanted before moving from shadow to paper trading
 test_weeks = 12               # planned length of the shadow phase (about 3 months)
+
+[risk]                        # the slice ladder and hard limits. Enforced in code; no model can override them.
+currency = "GBP"
+usd_per_gbp = 1.30            # update to the live rate; only used for the pool-liquidity cap
+slice_steps = [200, 350, 500, 1000]   # pounds; the live slice moves up one step at a time, only on your command
+position_pct = 7              # biggest single position, as % of the slice
+risk_per_trade_pct = 1.0      # most the slice may lose if the stop is hit, as % of the slice
+default_stop_pct = 14         # per-trade stop distance used for sizing when none is given
+daily_loss_limit_pct = 5      # halts the desk until you reset it
+project_stop_pct = 30         # halts live trading when the slice is down this much from its starting value
+max_pool_liquidity_pct = 1    # a position may not exceed this % of the pool's liquidity
+max_open_positions = 1        # one position at a time
+min_trade_gbp = 5             # below this the trade is not worth its costs
+stepup_min_live_weeks = 4
+stepup_min_trades = 30
+stepup_match_tolerance_pct = 3        # live average trade may trail paper by at most this many points
+illustrative_good_month_pct = [10, 20]          # for the slice table only, not a forecast
+illustrative_first_months_range_pct = [-100, 40]  # my judgement, not a calculation
