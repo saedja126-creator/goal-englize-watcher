@@ -1,0 +1,84 @@
+# Plan: from shadow test to a decision about live money
+
+Written 28 Oct 2026. Honest framing: this is a **measured experiment**. A flat or negative result is the most likely outcome of a
+first version, and finding that out cheaply is a success. Nothing in this plan promises a return.
+
+## Goal
+Find out, with data and in stages, whether the video's rules (and later the wallet-copy idea) have a positive edge after costs,
+and only then risk live money, capped at £500 (about $650–700), starting at £200.
+
+## Money at risk, by stage
+
+| Stage | When | Money at risk |
+|---|---|---|
+| Shadow test | Months 0–3 | £0 |
+| Decision point | Month 3 | £0 |
+| Paper trading, with paid data A/B (about £100 total, two months) | Months 3–5 | about £100 spent, no trading risk |
+| Live, first slice | Months 5–6 | £200 (cap £500) |
+| Scale in steps | Months 6–12 | up to £500; £350 and £500 steps |
+| £1,000 slice | Much later | Only if the £500 stretch validated |
+
+Worst case of the whole plan: about £600 (£100 data plus the £500 cap).
+
+## Phases, with gates
+
+### Phase 0: today (week 0)
+- Update the PC (pull the branch), stop the visible scanner window, run `python -m shadowbot start`.
+- Run `doctor`; send back its output and `samples/` so the parsers are confirmed on real data.
+- Run `status` and send the Test A section of `report`.
+- **Done when:** `status` says RUNNING, `doctor` required checks pass, error rate under 5%, feature completeness over 95%.
+
+### Phase 1: shadow test (weeks 1–12)
+- The scanner runs continuously. The user reads **one weekly report** (Sunday evening UTC), about 30 minutes: summary, day-by-day,
+  scorecard, gates.
+- Weeks 3–6: build the **Spy** strategy in the same log (free wallet-list source, scored in code). Both strategies are measured against
+  the control group (passed tokens with no trigger).
+- **Gate to leave shadow:** 200+ signals AND a positive edge over the control after the assumed 4% friction, seen across several
+  weeks (not one lucky week), AND filters that separate collapsed tokens from passed ones.
+- If signals are too rare, extend the test or loosen triggers. If the edge is not there, stop or revise: nothing has been spent.
+
+### Phase 2: month 3 decision
+- Stop, revise, or continue. If continuing, name the **one question** the paid data must answer and pick the provider.
+
+### Phase 3: paper trading (months 3–5)
+- Build the paper executor. It must call `RiskEngine.allow_order` before every order and record every close.
+- About the 15th of the first paper month, start the paid data (monthly, never upfront): an **A/B** with a free-data arm and a
+  free-plus-paid arm on the same tokens. Decide the second paid month at the end of the first by a rule set in advance.
+- **Gate to go live:** positive after realistic costs and fills over enough trades, and the paid data (if kept) shows a lift.
+
+### Phase 4: live, small (months 5–6)
+- Separate burner wallet holding only the slice (£200), never a main wallet. The key is never in the bot's chat or logs.
+- Hard limits (already built): 7% per position, 1% risk per trade, 5% daily loss limit, 30% project stop (£60 on £200), one position
+  at a time. Halts stay on until the user resets them.
+- **Step-up:** only after 4 live weeks at the slice, 30+ trades, stop untouched, live average trade positive and within 3 points of
+  paper, AND the user runs `python -m shadowbot stepup --confirm`.
+
+### Phase 5: scale (months 6–12)
+- £350, then £500. £1,000 only after a validated stretch at £500.
+
+## Weekly routine (the only regular task for the user)
+1. Open the Sunday report (`reports/weekly-DATE.html`).
+2. Read the plain-English summary, then the day-by-day table, then the gates.
+3. Paste anything odd into the chat; otherwise nothing is needed.
+
+## Stop conditions
+- Any phase gate fails and the data says the rules have no edge: stop, spend nothing more.
+- Project stop hit (−30% of the live slice): everything halts until the user decides.
+- Daily loss limit hit: the desk halts until reset.
+- Costs of data exceed the measured benefit.
+
+## What each side does
+
+| Claude (in the new chat or Claude Code) | The user |
+|---|---|
+| Keeps the code, parsers and reports correct; fixes parsers once real samples arrive | Keeps the PC awake and the scanner running; reads the weekly report |
+| Builds Spy, the paper executor and the A/B arm | Provides the wallet-list source choice, the book titles, the live GBP/USD rate |
+| Explains each report in plain English; flags weak evidence | Approves any money step and any step-up |
+| Never invents numbers; labels everything verified or not | Never shares the Helius key in chat |
+
+## Open items before Phase 1 is trustworthy
+1. Real `doctor` output and samples (parsers are unverified).
+2. Windows background mode check (`start`, `status`, `stop` once, then a reboot test).
+3. Live GBP/USD rate into `thresholds.toml` (`usd_per_gbp`).
+4. The three books (titles or cover photos).
+5. A free source for the Spy wallet list.
