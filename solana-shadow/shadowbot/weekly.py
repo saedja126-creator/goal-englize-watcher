@@ -291,3 +291,16 @@ def build_weekly(db, cfg: dict, end: date | None = None, now: int | None = None)
     end = end or datetime.fromtimestamp(now, tz=timezone.utc).date()
     data = collect(db, cfg, end, now)
     return to_markdown(data, cfg), to_html(data, cfg), end
+
+
+def ping_text(db, cfg: dict, path: str, end: date | None = None, now: int | None = None) -> str:
+    """Short Telegram message sent when the weekly report has been written (only if Telegram is set up)."""
+    import time as _time
+    now = now or int(_time.time())
+    end = end or datetime.fromtimestamp(now, tz=timezone.utc).date()
+    data = collect(db, cfg, end, now)
+    lines = reading(data, cfg)[:3]
+    gates = "; ".join(f"{a}: {b}" for a, b in gate_lines(data, cfg)[:2])
+    return (f"Shadow desk weekly report is ready (week to {end.strftime('%a %d %b')}).\n"
+            f"File on your PC: {path}\n\n" + "\n".join(f"- {x}" for x in lines) + f"\n\nGates: {gates}")
+

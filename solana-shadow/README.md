@@ -47,6 +47,10 @@ You only need a free Helius key. Paste it into the `.env` file yourself when ask
 
 Run the tests anytime: `python -m unittest discover -s tests -v`.
 
+## Optional Telegram notices
+
+If `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are in `.env`: the watchdog messages you when the scanner is down and cannot be restarted (and when it is back), and the running scanner sends a short notice with a 3-line summary when the Sunday weekly report is written. Never paste the token into a chat.
+
 ## What it does each cycle (every 30s)
 
 1. **Discover** new pools (GeckoTerminal) and add unseen tokens to a watch list.

@@ -1,5 +1,7 @@
 # Plan: from shadow test to a decision about live money
 
+> The complete, dated version (calendar, money map, notifications, full presentation text) is `MASTER_PLAN.md`. This file is the short form.
+
 Written 28 Oct 2026. Honest framing: this is a **measured experiment**. A flat or negative result is the most likely outcome of a
 first version, and finding that out cheaply is a success. Nothing in this plan promises a return.
 

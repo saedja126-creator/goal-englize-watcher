@@ -115,6 +115,14 @@ class TestWeekly(unittest.TestCase):
         self.assertIn("Too early to conclude", md)
         self.assertIn("<table>", page)
 
+    def test_ping_text_is_short_plain_and_points_to_the_file(self):
+        from shadowbot.weekly import ping_text
+        text = ping_text(self.db, CFG, "reports/weekly-2026-11-08.html", end=END, now=NOW)
+        self.assertIn("weekly report is ready (week to Sun 08 Nov)", text)
+        self.assertIn("reports/weekly-2026-11-08.html", text)
+        self.assertIn("Signals logged: 30 of 200 wanted", text)
+        self.assertLess(len(text), 1200)
+
     def test_cli_writes_both_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             dbfile = Path(tmp) / "x.db"

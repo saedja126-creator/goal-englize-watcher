@@ -1,5 +1,7 @@
 # Conversation summary: from the video to today
 
+> The one file to share with another chat or workflow is `MASTER_PLAN.md`.
+
 Written 28 Oct 2026. The user is UK-based, thinks in pounds, is not technical, and works in sports media and social strategy
 (the "Goal Englize" football content brand). They want plain English, honesty over hype, tables, and weekly (not daily) reports.
 
@@ -68,7 +70,7 @@ then paid data to widen the view. Final structure:
 ## 7. What was built (in the repo)
 Scanner, filters and logger; outcome tracker; `doctor`; technical report; **weekly report** (Markdown and HTML, written Sunday
 evenings UTC); **risk engine** (slice ladder, sizing caps, halts that persist, step-up rule); **background mode**
-(`start`, `status`, `stop`). A **18-slide presentation** covers risk, benefits, the trajectory and where things stand; an offline copy is `docs/Shadow_Desk_presentation.html` (arrow keys to move; print to PDF to keep it).
+(`start`, `status`, `stop`). A **20-slide presentation** covers risk, benefits, the trajectory and where things stand; an offline copy is `docs/Shadow_Desk_presentation.html` (arrow keys to move; print to PDF to keep it).
 See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 
 ## 8. State right now

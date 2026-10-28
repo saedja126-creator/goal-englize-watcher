@@ -1,5 +1,7 @@
 # Shadow Desk: project summary
 
+> The one file to share with another chat or workflow is `MASTER_PLAN.md` (dated calendar, money map, notifications, expectations, full presentation text).
+
 As of 28 Oct 2026. Repo: `saedja126-creator/goal-englize-watcher`, branch `claude/solana-shadow`, folder `solana-shadow/`.
 
 ## What it is
@@ -19,7 +21,7 @@ It **never trades, has no wallet, and never asks for a private key.**
 | Weekly report (Markdown + HTML) | Yes | Synthetic data | Not seen on real data yet |
 | Risk engine (slice ladder, halts, step-up rule) | Yes | Unit tests | Not connected to any executor yet |
 | Background mode (`start`, `status`, `stop`) | Yes | Linux tests pass | **Windows branch untested** |
-| Presentation (18 slides) | Yes | Standalone copy rendered and checked | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 ; offline copy: `docs/Shadow_Desk_presentation.html` |
+| Presentation (20 slides) | Yes | Standalone copy rendered and checked | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 ; offline copy: `docs/Shadow_Desk_presentation.html` |
 | Paper-trading executor | **No** | | Next phase |
 | Wallet-copy ("Spy") strategy | **No** | | Needs a free wallet-list source |
 | Paid-data A/B arm | **No** | | Comes with paper phase |
@@ -85,4 +87,4 @@ lives only in `.env` (git-ignored).
 - GBP/USD rate: no reliable live figure found (about 1.25–1.34 in stale sources).
 
 ## Tests
-Run `python -m unittest discover -s tests -v` (stdlib only). 55 tests. Most use synthetic data and prove the logic; `tests/test_real_samples.py` uses trimmed real responses captured on 27 Oct 2026.
+Run `python -m unittest discover -s tests -v` (stdlib only). 56 tests. Most use synthetic data and prove the logic; `tests/test_real_samples.py` uses trimmed real responses captured on 27 Oct 2026.

@@ -12,8 +12,8 @@ from .report import build_report
 from .risk import RiskEngine, limits_table
 from .runner import run_cycle
 from .solana_rpc import Rpc
-from .watchdog import notify, run_watchdog
-from .weekly import build_weekly
+from .watchdog import notify, run_watchdog, send_telegram
+from .weekly import build_weekly, ping_text
 
 
 def _write_weekly(db, cfg, end=None) -> str:
@@ -72,7 +72,13 @@ def cmd_run(args) -> int:
                 if now_utc.tm_wday == 6 and now_utc.tm_hour >= 20:  # Sunday evening, UTC
                     day = time.strftime("%Y-%m-%d", now_utc)
                     if not (config.REPORTS_DIR / f"weekly-{day}.html").exists():
-                        say(f"Weekly report written: {_write_weekly(db, cfg)}")
+                        weekly_path = _write_weekly(db, cfg)
+                        say(f"Weekly report written: {weekly_path}")
+                        try:  # optional: only sends if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set in .env
+                            if send_telegram(ping_text(db, cfg, weekly_path)):
+                                say("Telegram: weekly report notice sent")
+                        except Exception as exc:  # a failed ping must never stop the scanner
+                            say(f"[telegram] weekly notice failed ({type(exc).__name__})")
             if args.once:
                 break
             time.sleep(max(1.0, cfg["scan"]["cycle_seconds"] - (time.time() - started)))
