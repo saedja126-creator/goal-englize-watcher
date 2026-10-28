@@ -68,7 +68,7 @@ then paid data to widen the view. Final structure:
 ## 7. What was built (in the repo)
 Scanner, filters and logger; outcome tracker; `doctor`; technical report; **weekly report** (Markdown and HTML, written Sunday
 evenings UTC); **risk engine** (slice ladder, sizing caps, halts that persist, step-up rule); **background mode**
-(`start`, `status`, `stop`). A **15-slide presentation** covers risk, benefits and the trajectory.
+(`start`, `status`, `stop`). A **16-slide presentation** covers risk, benefits, the trajectory and where things stand; an offline copy is `docs/Shadow_Desk_presentation.html` (arrow keys to move; print to PDF to keep it).
 See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 
 ## 8. State right now

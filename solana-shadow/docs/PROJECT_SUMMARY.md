@@ -18,7 +18,7 @@ It **never trades, has no wallet, and never asks for a private key.**
 | Weekly report (Markdown + HTML) | Yes | Synthetic data | Not seen on real data yet |
 | Risk engine (slice ladder, halts, step-up rule) | Yes | Unit tests | Not connected to any executor yet |
 | Background mode (`start`, `status`, `stop`) | Yes | Linux tests pass | **Windows branch untested** |
-| Presentation (15 slides) | Yes | Not rendered by me | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 |
+| Presentation (16 slides) | Yes | Standalone copy rendered and checked | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 ; offline copy: `docs/Shadow_Desk_presentation.html` |
 | Paper-trading executor | **No** | | Next phase |
 | Wallet-copy ("Spy") strategy | **No** | | Needs a free wallet-list source |
 | Paid-data A/B arm | **No** | | Comes with paper phase |

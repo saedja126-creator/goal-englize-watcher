@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shadow Desk: Risk, Benefits, Trajectory</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Public+Sans:wght@400;600;700&display=swap">
+<style>
+html,body{margin:0;height:100%;background:#0b0f17;overflow:hidden;font-family:'Public Sans',Arial,sans-serif}
+:root{--s:1}
+.slide-wrap{position:absolute;width:1920px;height:1080px;transform:scale(var(--s));transform-origin:top left;
+  left:calc((100vw - 1920px * var(--s)) / 2);top:calc((100vh - 1080px * var(--s)) / 2);display:none}
+.slide{width:1920px;height:1080px;box-sizing:border-box;position:relative;overflow:hidden}
+.slide *{margin:0;box-sizing:border-box}
+.slide ul,.slide ol{padding-left:1.1em}.slide li{margin-bottom:.35em}
+.slide table{border-collapse:collapse;width:100%;table-layout:fixed}
+.slide th,.slide td{padding:.35em .6em;text-align:left;vertical-align:top}
+.slide aside{display:none}
+x-shape{display:block}
+x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 100%,60% 72%,0 72%)}
+.ui{position:fixed;left:0;right:0;bottom:8px;text-align:center;color:#8a95a7;font-size:14px;z-index:5;pointer-events:none}
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{overflow:visible;height:auto;background:none}
+  .slide-wrap{display:block !important;position:relative !important;left:0 !important;top:0 !important;transform:none !important;page-break-after:always;break-after:page}
+  .ui{display:none}
+}
+</style></head><body>
+<div class="slide-wrap" id="s-cover"><section class="slide" id="cover" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:32px">
+<div style="width:120px;height:8px;background:#F28C38"></div>
+<p style="font-size:28px;font-weight:600;color:#F28C38;letter-spacing:4px;text-transform:uppercase">Risk report · 28 Oct 2026</p>
+<h1 style="font-family:'Libre Baskerville', Georgia, serif;font-size:136px;font-weight:700;line-height:1.05;color:#F6F4EE">Shadow Desk</h1>
+<p style="font-size:48px;line-height:1.25;color:#C6D2E2">Risk, benefits and trajectory for a Solana memecoin scanner</p>
+<p style="font-size:30px;line-height:1.4;color:#A9B6C8">Shadow mode first: nothing here trades or holds a wallet. Every figure is a scenario, not a forecast.</p>
+<aside>Opening. This is a plain-English risk report for the shadow-mode scanner built from the video's rules. All dollar figures are scenarios built from stated assumptions. None is a forecast or a promise.</aside>
+</section></div>
+<div class="slide-wrap" id="s-bottomline"><section class="slide" id="bottomline" data-transition="fade" style="background:#F28C38;color:#0F1B2D;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<p style="font-size:28px;font-weight:700;letter-spacing:4px;text-transform:uppercase">The bottom line</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:84px;font-weight:700;line-height:1.15">Test for free first. Put money in only when the data says so.</h2>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#0F1B2D;padding:40px;border-radius:16px">
+<p style="font-size:88px;font-weight:700;line-height:1.05;color:#F28C38">£0</p>
+<p style="font-size:28px;line-height:1.35;color:#E1E7F0">capital at risk during the 3-month shadow test and the paper-trading phase. Nothing trades.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#0F1B2D;padding:40px;border-radius:16px">
+<p style="font-size:88px;font-weight:700;line-height:1.05;color:#F28C38">£500</p>
+<p style="font-size:28px;line-height:1.35;color:#E1E7F0">live cap (roughly $650–700). The first £200 only after the gates are met, then added in steps.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#0F1B2D;padding:40px;border-radius:16px">
+<p style="font-size:88px;font-weight:700;line-height:1.05;color:#F28C38">0</p>
+<p style="font-size:28px;line-height:1.35;color:#E1E7F0">returns promised. The test exists to find out whether any edge is there.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#0F1B2D">Plus about £100 for two paid-data months from month 3, treated as a research cost. Not a forecast.</p>
+<aside>The one-slide summary. The three-month shadow test and the paper-trading phase risk no capital. Live money is capped at 500 pounds, starting with 200 and added in steps only as the gates are met. About 100 pounds goes on two months of paid data from month three, as a research cost. Nothing in this deck promises a return.</aside>
+</section></div>
+<div class="slide-wrap" id="s-flow"><section class="slide" id="flow" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">What the shadow desk does</h2>
+<div style="display:flex;align-items:stretch;gap:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;padding:28px 24px;border:1px solid #DDD8CB;border-radius:16px">
+<h3 style="font-size:36px;font-weight:700;color:#2E6FB7">Scan</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">New Solana tokens, checked every 30 seconds</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="width:56px;height:28px;background:#2E6FB7"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;padding:28px 24px;border:1px solid #DDD8CB;border-radius:16px">
+<h3 style="font-size:36px;font-weight:700;color:#2E6FB7">Check</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">Hard facts in code: authorities, holders, liquidity</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="width:56px;height:28px;background:#2E6FB7"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;padding:28px 24px;border:1px solid #DDD8CB;border-radius:16px">
+<h3 style="font-size:36px;font-weight:700;color:#2E6FB7">Log</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">Every decision saved with the check that fired</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="width:56px;height:28px;background:#2E6FB7"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;padding:28px 24px;border:1px solid #DDD8CB;border-radius:16px">
+<h3 style="font-size:36px;font-weight:700;color:#2E6FB7">Track</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">Price and liquidity at +30s, +5m, +15m, +1h</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="width:56px;height:28px;background:#2E6FB7"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;padding:28px 24px;border:1px solid #DDD8CB;border-radius:16px">
+<h3 style="font-size:36px;font-weight:700;color:#2E6FB7">Report</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">A weekly report: do the filters work? Does a trigger beat the control?</p>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:28px">
+<p style="font-size:30px;font-weight:700;background:#F28C38;color:#0F1B2D;padding:14px 32px;border-radius:50px">No wallet. No orders. No keys.</p>
+<p style="font-size:30px;line-height:1.4;color:#1B2536">It only watches, logs and measures, in the background. Paper and live trading come later, only after the gates.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Shadow Desk · risk report · 28 Oct 2026</p>
+<aside>The five stages of the shadow desk. Each token is scanned, checked with hard facts in code, logged with the reason, tracked afterwards and summarised in a weekly report every Sunday evening (UTC). There is no wallet and no ordering code in this phase.</aside>
+</section></div>
+<div class="slide-wrap" id="s-risks-market"><section class="slide" id="risks-market" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">Market risks and their controls</h2>
+<table style="font-size:28px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
+<tr style="background:#1B2536"><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">Risk</th><th style="width:58%;color:#F6F4EE;text-align:left;font-weight:700">How it is controlled</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Level</th></tr>
+<tr style="background:#FFFDF8"><td style="width:26%">Rug or sudden collapse</td><td style="width:58%">Position kept near 7% of the account, so one rug costs about 7%. Mint, freeze and holder checks run in code.</td><td style="width:16%;color:#A8500A">High</td></tr>
+<tr style="background:#EFEBDF"><td style="width:26%">Oversized positions</td><td style="width:58%">Risk 0.5–1% per trade. Daily loss limit about 5%. Project stop at −30% of the live slice.</td><td style="width:16%;color:#A8500A">High</td></tr>
+<tr style="background:#FFFDF8"><td style="width:26%">Thin liquidity and slippage</td><td style="width:58%">Position capped near 1% of pool liquidity. 2% slippage cap. Costs deducted in every report.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
+<tr style="background:#EFEBDF"><td style="width:26%">Late signal when copying wallets</td><td style="width:58%">Measured at the +30s checkpoint and compared with a random-entry control group.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Levels are my judgement, not measured values. Control values are proposals to tune from shadow data.</p>
+<aside>Two high risks: rugs and oversized positions. Both are handled mainly by keeping each position small, because a stop-loss does not protect against a token that collapses in one step.</aside>
+</section></div>
+<div class="slide-wrap" id="s-risks-ops"><section class="slide" id="risks-ops" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">Operational and money risks</h2>
+<table style="font-size:26px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
+<tr style="background:#1B2536"><th style="width:28%;color:#F6F4EE;text-align:left;font-weight:700">Risk</th><th style="width:56%;color:#F6F4EE;text-align:left;font-weight:700">How it is controlled</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Level</th></tr>
+<tr style="background:#FFFDF8"><td style="width:28%">Bad or missing data</td><td style="width:56%">Doctor check on your PC. Error rate and completeness are reported. Missing values are never treated as safe.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
+<tr style="background:#EFEBDF"><td style="width:28%">Too few trades to conclude</td><td style="width:56%">No conclusion before 200+ signals. 100 trades is only ±10 points on a win rate.</td><td style="width:16%;color:#A8500A">High</td></tr>
+<tr style="background:#FFFDF8"><td style="width:28%">Paid data that does not pay</td><td style="width:56%">Month by month, as a two-month A/B test (about £100). A capped research cost, not an investment.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
+<tr style="background:#EFEBDF"><td style="width:28%">Key or wallet loss</td><td style="width:56%">Shadow mode has no wallet. Later: a separate burner wallet holding only the test amount.</td><td style="width:16%;color:#3E4A5C">Low now</td></tr>
+<tr style="background:#FFFDF8"><td style="width:28%">UK tax and records</td><td style="width:56%">Each swap can be a taxable disposal. The log keeps the records. Confirm with GOV.UK or an accountant.</td><td style="width:16%;color:#3E4A5C">Low</td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Levels are my judgement. Not tax advice: check HMRC guidance for your own position.</p>
+<aside>The operational risks are mostly about not fooling yourself: too little data, bad data, or paying for data that does not help. The controls are measurement and staging.</aside>
+</section></div>
+<div class="slide-wrap" id="s-sizing"><section class="slide" id="sizing" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Rugs hit position size, not stop-losses</h2>
+<p style="font-size:32px;line-height:1.35;color:#A9B6C8">Loss of the whole account after three rugs in a row, by position size</p>
+<div style="display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;align-items:center;gap:32px">
+<div style="width:420px;display:flex;flex-direction:column;gap:4px">
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">40% per trade</p>
+<p style="font-size:24px;color:#A9B6C8">video-style sizing</p>
+</div>
+<div style="width:897px;height:72px;background:#F28C38;border-radius:8px"></div>
+<p style="width:200px;font-size:48px;font-weight:700;color:#F28C38">−78%</p>
+</div>
+<div style="display:flex;align-items:center;gap:32px">
+<div style="width:420px;display:flex;flex-direction:column;gap:4px">
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">25% per trade</p>
+<p style="font-size:24px;color:#A9B6C8">moderate sizing</p>
+</div>
+<div style="width:667px;height:72px;background:#6FB1F0;border-radius:8px"></div>
+<p style="width:200px;font-size:48px;font-weight:700;color:#6FB1F0">−58%</p>
+</div>
+<div style="display:flex;align-items:center;gap:32px">
+<div style="width:420px;display:flex;flex-direction:column;gap:4px">
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">7% per trade</p>
+<p style="font-size:24px;color:#A9B6C8">my proposal</p>
+</div>
+<div style="width:230px;height:72px;background:#6FB1F0;border-radius:8px"></div>
+<p style="width:200px;font-size:48px;font-weight:700;color:#6FB1F0">−20%</p>
+</div>
+</div>
+<p style="font-size:30px;line-height:1.4;color:#F6F4EE">One rug costs −40%, −25% or −7% of the account.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">Arithmetic: 1 − (1 − size)³, assuming each rug takes the whole position. Illustrative.</p>
+<aside>A stop-loss only helps if the price falls through your stop gradually. A rug can take the token to near zero in one step, so the protection is a small position. Three rugs at 40 percent leaves 21.6 percent of the account, a loss of 78 percent.</aside>
+</section></div>
+<div class="slide-wrap" id="s-thin-edge"><section class="slide" id="thin-edge" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">A 10-point win-rate swing flips the month</h2>
+<p style="font-size:32px;line-height:1.35;color:#3E4A5C">Illustrative monthly result for the same strategy at two different win rates</p>
+<div style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;align-items:center;gap:32px">
+<div style="width:800px;display:flex;justify-content:flex-end">
+<p style="font-size:36px;font-weight:600;color:#1B2536">45% win rate</p>
+</div>
+<div style="width:800px;display:flex;align-items:center;gap:24px">
+<div style="width:420px;height:88px;background:#2E6FB7;border-radius:8px"></div>
+<p style="font-size:56px;font-weight:700;color:#2E6FB7">+21%</p>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:32px">
+<div style="width:800px;display:flex;justify-content:flex-end;align-items:center;gap:24px">
+<p style="font-size:56px;font-weight:700;color:#A8500A">−24%</p>
+<div style="width:480px;height:88px;background:#F28C38;border-radius:8px"></div>
+</div>
+<div style="width:800px;display:flex;align-items:center">
+<p style="font-size:36px;font-weight:600;color:#1B2536">35% win rate</p>
+</div>
+</div>
+</div>
+<div style="background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px">
+<p style="font-size:26px;line-height:1.45;color:#3E4A5C">Assumptions: 14% stop, 30% average win, 7% position, 5 trades a day, 4% round-trip friction. Edge per trade after costs: +1.8% of the stake at 45%, −2.6% at 35%.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Illustrative arithmetic. Not a forecast and not a backtest.</p>
+<aside>The same rules, the same costs, and only the win rate changes. At 45 percent the month is about plus 21 percent. At 35 percent it is about minus 24 percent. That sensitivity is why the shadow test and the cost assumptions matter more than any forecast.</aside>
+</section></div>
+<div class="slide-wrap" id="s-subscription"><section class="slide" id="subscription" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">A $69 tool needs a big month to pay for itself</h2>
+<p style="font-size:32px;line-height:1.35;color:#3E4A5C">Monthly return needed just to cover the $69 fee, by capital</p>
+<div style="display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;align-items:center;gap:32px">
+<p style="width:380px;font-size:32px;font-weight:600;color:#1B2536">$200 capital</p>
+<div style="width:897px;height:72px;background:#F28C38;border-radius:8px"></div>
+<p style="width:220px;font-size:48px;font-weight:700;color:#A8500A">34.5%</p>
+</div>
+<div style="display:flex;align-items:center;gap:32px">
+<p style="width:380px;font-size:32px;font-weight:600;color:#1B2536">$1,000 capital</p>
+<div style="width:179px;height:72px;background:#2E6FB7;border-radius:8px"></div>
+<p style="width:220px;font-size:48px;font-weight:700;color:#2E6FB7">6.9%</p>
+</div>
+<div style="display:flex;align-items:center;gap:32px">
+<p style="width:380px;font-size:32px;font-weight:600;color:#1B2536">$5,000 capital</p>
+<div style="width:36px;height:72px;background:#2E6FB7;border-radius:8px"></div>
+<p style="width:220px;font-size:48px;font-weight:700;color:#2E6FB7">1.4%</p>
+</div>
+</div>
+<div style="background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px">
+<p style="font-size:30px;line-height:1.4;color:#1B2536"><b>10× rule:</b> $690 of monthly profit needs about $3,450 of capital at 20% a month, or $6,900 at 10%. At £500 that is out of reach, so paid data is a capped research cost (about £100).</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Arithmetic: $69 ÷ capital. Before trading losses. Fee figure is the one discussed, unconfirmed.</p>
+<aside>This is the arithmetic behind not buying a data subscription early. At 200 dollars of capital the fee alone needs a 34.5 percent month. The 10 times rule means a tool should be producing at least ten times its cost, which at 69 dollars is 690 dollars a month. At the 500 pound cap that is out of reach, so the paid data is treated as a capped research cost of about 100 pounds.</aside>
+</section></div>
+<div class="slide-wrap" id="s-stages"><section class="slide" id="stages" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Staged spending about halves the worst case</h2>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">Upfront plan: $690 subscription plus $1,000 capital (about £1,250)</p>
+<div style="width:1500px;height:96px;background:#F28C38;border-radius:8px;display:flex;align-items:center;justify-content:flex-end">
+<p style="font-size:56px;font-weight:700;color:#0F1B2D;width:300px;text-align:right">$1,690</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">Staged plan, worst case: about £100 of paid data plus the £500 live cap</p>
+<div style="display:flex;align-items:center;gap:28px">
+<div style="width:744px;height:96px;background:#6FB1F0;border-radius:8px"></div>
+<p style="font-size:56px;font-weight:700;color:#6FB1F0">≈ £600</p>
+</div>
+</div>
+<p style="font-size:32px;line-height:1.4;color:#C6D2E2">If a gate fails, the unspent money is the saving.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">Worst case = all of the plan lost; live money only after the gates. Pounds at about $1.30–1.40 per £1.</p>
+<aside>Same project, two ways to pay for it. Buying a year of data and funding the full account on day one commits 1,690 dollars. The staged plan's worst case is about 600 pounds: roughly 100 pounds for two months of paid data plus the 500 pound live cap, and the live money is only committed after the gates are met. That is about half.</aside>
+</section></div>
+<div class="slide-wrap" id="s-timeline"><section class="slide" id="timeline" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">The 12-month path, with a gate at every step</h2>
+<div style="display:flex;align-items:stretch;gap:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFDF8;border-top:6px solid #2E6FB7;padding:28px 24px">
+<p style="font-size:24px;font-weight:600;color:#5B6676;text-transform:uppercase">Months 0–3</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2;color:#1B2536">Shadow test</h3>
+<p style="font-size:40px;font-weight:700;color:#2E6FB7">£0</p>
+<p style="font-size:24px;color:#5B6676">at risk</p>
+<p style="font-size:24px;line-height:1.4;color:#3E4A5C"><b>Gate:</b> 200+ signals and a positive edge over the control, across several weeks</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFDF8;border-top:6px solid #2E6FB7;padding:28px 24px">
+<p style="font-size:24px;font-weight:600;color:#5B6676;text-transform:uppercase">Month 3</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2;color:#1B2536">Decision point</h3>
+<p style="font-size:40px;font-weight:700;color:#2E6FB7">£0</p>
+<p style="font-size:24px;color:#5B6676">at risk</p>
+<p style="font-size:24px;line-height:1.4;color:#3E4A5C"><b>Gate:</b> stop, revise or continue. Choose the one question the paid data must answer</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFDF8;border-top:6px solid #2E6FB7;padding:28px 24px">
+<p style="font-size:24px;font-weight:600;color:#5B6676;text-transform:uppercase">Months 3–5</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2;color:#1B2536">Paper + data trial</h3>
+<p style="font-size:40px;font-weight:700;color:#2E6FB7">~£100</p>
+<p style="font-size:24px;color:#5B6676">at risk</p>
+<p style="font-size:24px;line-height:1.4;color:#3E4A5C"><b>Gate:</b> positive after costs. Paid data from the 15th, run as an A/B test</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFDF8;border-top:6px solid #F28C38;padding:28px 24px">
+<p style="font-size:24px;font-weight:600;color:#5B6676;text-transform:uppercase">Months 5–6</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2;color:#1B2536">Live, first slice</h3>
+<p style="font-size:40px;font-weight:700;color:#A8500A">£200</p>
+<p style="font-size:24px;color:#5B6676">at risk</p>
+<p style="font-size:24px;line-height:1.4;color:#3E4A5C"><b>Gate:</b> live matches paper. Cap £500, stop at −30%</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFDF8;border-top:6px solid #F28C38;padding:28px 24px">
+<p style="font-size:24px;font-weight:600;color:#5B6676;text-transform:uppercase">Months 6–12</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2;color:#1B2536">Scale in steps</h3>
+<p style="font-size:40px;font-weight:700;color:#A8500A">£500 cap</p>
+<p style="font-size:24px;color:#5B6676">at risk</p>
+<p style="font-size:24px;line-height:1.4;color:#3E4A5C"><b>Gate:</b> more only if the live slice validates (up to £1,000 later)</p>
+</div>
+</div>
+<p style="font-size:30px;line-height:1.4;color:#1B2536">A weekly report tracks every gate. If one fails, stop or pivot: the unspent money is the saving.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Blue = no live money. Orange = live money. Timings are a plan, not a promise.</p>
+<aside>Five stages. The first three risk almost nothing, and a weekly report tracks every gate. Paid data starts around the 15th of the first paper-trading month, as a controlled comparison. Real money only appears at months five and six, capped at 500 pounds and added in steps. Up to 1,000 pounds comes much later, and only if the live results matched the paper results.</aside>
+</section></div>
+<div class="slide-wrap" id="s-benefits"><section class="slide" id="benefits" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">What you get, even if there is no edge</h2>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:40px">
+<h3 style="font-size:40px;font-weight:700;color:#6FB1F0">Benefits</h3>
+<ul style="font-size:30px;line-height:1.4;color:#F6F4EE">
+<li>A $0 answer on whether the video’s rules work</li>
+<li>An audit trail: every decision with the check that fired</li>
+<li>A reusable log: the wallet-copy idea plugs into it</li>
+<li>A measured basis for any paid tool, not a guess</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:40px">
+<h3 style="font-size:40px;font-weight:700;color:#F28C38">Limits</h3>
+<ul style="font-size:30px;line-height:1.4;color:#F6F4EE">
+<li>No edge is guaranteed; the data decides</li>
+<li>Copied wallets arrive late, and the edge fades as more people copy</li>
+<li>Free-tier limits may hide some new tokens</li>
+<li>Dev-wallet and LP-lock checks are not built yet</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">Shadow Desk · risk report · 28 Oct 2026</p>
+<aside>Even a negative result is useful here, because it is obtained at no capital risk. The limits column is the honest counterweight: a wallet-copy signal is late by construction, and some checks are still missing.</aside>
+</section></div>
+<div class="slide-wrap" id="s-expectations"><section class="slide" id="expectations" data-transition="fade" style="display:flex; flex-direction:column; gap:40px; padding:128px 128px 160px; background:#f6f4ee">
+  <h2 style="font-family:'Libre Baskerville', Georgia, serif; font-size:64px; font-weight:700; line-height:1.15; color:#1b2536">What to expect, and when<br></h2>
+  <table style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; color:#1b2536">
+    <tr style="background:#1b2536"><th style="font-weight:700; width:20%; color:#f6f4ee">Horizon</th><th style="font-weight:700; width:80%; color:#f6f4ee">What to expect</th></tr>
+    <tr style="background:#fffdf8"><td>Months 0–3</td><td>£0 of live capital. The output is data, summarised in a weekly report. Paper trading starts after month 3.</td></tr>
+    <tr style="background:#efebdf"><td>Months 5–6</td><td>First live results on a £200 slice, capped at £500. Noisy. Plausible range −100% to +40% of the slice (my judgement).</td></tr>
+    <tr style="background:#fffdf8"><td>Month 12</td><td>A good outcome is 10–20% a month after all costs. Above 30% sustained is suspicious, not a goal.</td></tr>
+  </table>
+  <div style="display:flex; flex-direction:row; gap:32px">
+    <div style="display:flex; flex-direction:row; gap:24px; align-items:center; flex:1; padding:24px 32px; background:#fffdf8; border:1px solid #ddd8cb; border-radius:16px">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:44px; font-weight:700; color:#2e6fb7">£20–40</p>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; line-height:1.35; color:#3e4a5c">a month: 10–20% of a £200 slice</p>
+    </div>
+    <div style="display:flex; flex-direction:row; gap:24px; align-items:center; flex:1; padding:24px 32px; background:#fffdf8; border:1px solid #ddd8cb; border-radius:16px">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:44px; font-weight:700; color:#2e6fb7">£50–100</p>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; line-height:1.35; color:#3e4a5c">a month: 10–20% of the £500 cap</p>
+    </div>
+  </div>
+  <p style="position:absolute; bottom:64px; left:128px; width:1664px; font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#5b6676">Good-case figures before any losses. Scenarios from my judgement, not forecasts.</p>
+  <aside>Pound results scale with capital. A good month on a 200 pound slice is 20 to 40 pounds. At the 500 pound cap it is 50 to 100 pounds, and that is a good case, not an expected one.</aside>
+</section></div>
+<div class="slide-wrap" id="s-slices"><section class="slide" id="slices" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">The money path by slice size, in pounds</h2>
+<table style="font-size:26px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
+<tr style="background:#1B2536"><th style="width:22%;color:#F6F4EE;text-align:left;font-weight:700">Live slice</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Per trade (7%)</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Stop at −30%</th><th style="width:20%;color:#F6F4EE;text-align:left;font-weight:700">Good month</th><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">First live months</th></tr>
+<tr style="background:#FFFDF8"><td style="width:22%">£200 (first step)</td><td style="width:16%">£14</td><td style="width:16%">£60</td><td style="width:20%;color:#2E6FB7">£20–40</td><td style="width:26%;color:#A8500A">−£200 to +£80</td></tr>
+<tr style="background:#EFEBDF"><td style="width:22%">£350</td><td style="width:16%">£25</td><td style="width:16%">£105</td><td style="width:20%;color:#2E6FB7">£35–70</td><td style="width:26%;color:#A8500A">−£350 to +£140</td></tr>
+<tr style="background:#FFFDF8"><td style="width:22%">£500 (the cap)</td><td style="width:16%">£35</td><td style="width:16%">£150</td><td style="width:20%;color:#2E6FB7">£50–100</td><td style="width:26%;color:#A8500A">−£500 to +£200</td></tr>
+<tr style="background:#EFEBDF"><td style="width:22%">£1,000 (much later)</td><td style="width:16%">£70</td><td style="width:16%">£300</td><td style="width:20%;color:#2E6FB7">£100–200</td><td style="width:26%;color:#A8500A">−£1,000 to +£400</td></tr>
+</table>
+<div style="background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px">
+<p style="font-size:30px;line-height:1.4;color:#1B2536"><b>Step-up rule:</b> move to the next slice only after four live weeks at the current one that match paper results, with the stop untouched.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Good month and range are my judgement, not forecasts. £1 is roughly $1.30–1.40 (check the live rate).</p>
+<aside>The same rules at four slice sizes. The percentages are identical; only the pound amounts change. A bigger slice does not improve the odds, it increases what is at stake. The first-live-months range of minus 100 percent to plus 40 percent is a judgement, not a calculation.</aside>
+</section></div>
+<div class="slide-wrap" id="s-controls"><section class="slide" id="controls" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Hard rules the code enforces</h2>
+<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px">
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Position size</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 7% of the account per trade, capped near 1% of pool liquidity.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Risk per trade</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">0.5–1% of the account at the stop.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Daily loss limit</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 5%. The desk halts and waits for you.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">Project stop</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">Live trading halts if the live slice falls 30%: £60 on £200, £150 on £500.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">One position at a time</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">No new scan while a position is open.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">No keys in the bot</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">Shadow mode has no wallet. Later: a separate burner wallet.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">All values are proposals, tuned from shadow data. No model can override them.</p>
+<aside>These limits live in code, not in a prompt, so nothing can talk the system out of them. The blue cards limit how much any single trade can cost. The orange cards limit how much the whole project can lose.</aside>
+</section></div>
+<div class="slide-wrap" id="s-status"><section class="slide" id="status" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Where things stand today</h2>
+<div style="display:flex;gap:32px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:36px 40px">
+<h3 style="font-size:38px;font-weight:700;color:#6FB1F0">Built</h3>
+<ul style="font-size:26px;line-height:1.4;color:#F6F4EE">
+<li>Scanner, filters and logger</li>
+<li>Outcome tracker and weekly report</li>
+<li>Risk engine and slice ladder</li>
+<li>Background mode: start, status, stop</li>
+<li>45 tests on synthetic data</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:36px 40px">
+<h3 style="font-size:38px;font-weight:700;color:#F28C38">Not verified yet</h3>
+<ul style="font-size:26px;line-height:1.4;color:#F6F4EE">
+<li>Real API responses: needs the doctor check on your PC</li>
+<li>Windows background mode</li>
+<li>API prices and limits, from search snippets</li>
+<li>The live GBP/USD rate</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:36px 40px">
+<h3 style="font-size:38px;font-weight:700;color:#C6D2E2">Not built yet</h3>
+<ul style="font-size:26px;line-height:1.4;color:#F6F4EE">
+<li>Paper-trading executor</li>
+<li>Wallet-copy (Spy) strategy</li>
+<li>Paid-data A/B comparison</li>
+<li>Dev-wallet and LP-lock checks</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">Status on 28 Oct 2026. The tests prove the logic on synthetic data, not the real APIs.</p>
+<aside>An honest status. The code is built and tested on made-up data. Nobody has yet seen it run against the real market APIs, because the cloud environment could not reach them. The doctor check on your own PC is what closes that gap. Windows background mode and the API prices are also unconfirmed.</aside>
+</section></div>
+<div class="slide-wrap" id="s-next"><section class="slide" id="next" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">Next steps</h2>
+<div style="display:flex;gap:48px;align-items:stretch">
+<ol style="flex:1;font-size:32px;line-height:1.5;color:#1B2536">
+<li>Run the doctor check on your PC with Claude Code</li>
+<li>Send me the output, so the parsers are confirmed on real data</li>
+<li>Start the scanner in the background (start, status, stop) and keep the PC awake</li>
+<li>Read the weekly report every Sunday: day by day, then the scorecard</li>
+</ol>
+<div style="width:600px;display:flex;flex-direction:column;gap:20px;background:#1B2536;border-radius:16px;padding:40px">
+<h3 style="font-size:36px;font-weight:700;color:#F28C38">Decisions needed</h3>
+<ul style="font-size:28px;line-height:1.4;color:#F6F4EE">
+<li>Book titles or cover photos</li>
+<li>Wallet list source for the Spy test (free sources only)</li>
+<li>Confirm the £500 live cap, with £200 first</li>
+<li>The live GBP/USD rate for the settings file</li>
+</ul>
+</div>
+</div>
+<p style="font-size:32px;font-weight:700;line-height:1.4;color:#1B2536">No returns are promised. The test exists to find out.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Shadow Desk · risk report · 28 Oct 2026</p>
+<aside>Immediate action is the doctor check on the PC, because everything after it depends on real API responses. The decisions on the right can wait until the first report is in.</aside>
+</section></div>
+<div class="ui"><span id="n"></span> &nbsp;·&nbsp; ← → to move &nbsp;·&nbsp; Print (Ctrl+P) and choose Save as PDF to keep a copy</div>
+<script>
+const w=[...document.querySelectorAll('.slide-wrap')];let i=0;
+function fit(){document.documentElement.style.setProperty('--s',Math.min(innerWidth/1920,innerHeight/1080))}
+function show(k){i=Math.max(0,Math.min(w.length-1,k));w.forEach((e,j)=>e.style.display=j===i?'block':'none');
+  document.getElementById('n').textContent=(i+1)+' / '+w.length;history.replaceState(null,'','#'+(i+1))}
+addEventListener('resize',fit);addEventListener('hashchange',()=>show((parseInt(location.hash.slice(1))||1)-1));
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))show(i+1);if(['ArrowLeft','PageUp'].includes(e.key))show(i-1);
+  if(e.key==='Home')show(0);if(e.key==='End')show(w.length-1)});
+addEventListener('click',e=>show(e.clientX>innerWidth/2?i+1:i-1));
+fit();show((parseInt(location.hash.slice(1))||1)-1);
+</script></body></html>
