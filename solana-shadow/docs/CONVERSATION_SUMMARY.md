@@ -68,7 +68,7 @@ then paid data to widen the view. Final structure:
 ## 7. What was built (in the repo)
 Scanner, filters and logger; outcome tracker; `doctor`; technical report; **weekly report** (Markdown and HTML, written Sunday
 evenings UTC); **risk engine** (slice ladder, sizing caps, halts that persist, step-up rule); **background mode**
-(`start`, `status`, `stop`). A **16-slide presentation** covers risk, benefits, the trajectory and where things stand; an offline copy is `docs/Shadow_Desk_presentation.html` (arrow keys to move; print to PDF to keep it).
+(`start`, `status`, `stop`). A **18-slide presentation** covers risk, benefits, the trajectory and where things stand; an offline copy is `docs/Shadow_Desk_presentation.html` (arrow keys to move; print to PDF to keep it).
 See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 
 ## 8. State right now
@@ -92,6 +92,12 @@ See `PROJECT_SUMMARY.md` for details and `PLAN.md` for what comes next.
 - **EverBee:** an Etsy product-research tool; no MCP connector exists; a separate subject, not pursued.
 - **Books:** the user has three books and will send titles or cover photos. Most useful chapters: how scam tokens work on Solana,
   position sizing and risk, and on-chain wallet analysis.
+
+## 9b. A gap the user called out (28 Oct)
+The plan said "about £100 for paid data" and "£200 live" but never said what the money buys, where to pay, or where the
+trading money physically goes. The presentation and `PLAN.md` now have a money map: the £100 is a hard cap for one two-month
+data subscription (provider not chosen until month 3), and the live money goes into a separate burner Solana wallet funded from a
+UK exchange (exchange and wallet app not chosen or verified until month 5).
 
 ## 10. Pending decisions and unanswered questions
 1. Run the update on the PC and send back `python -m shadowbot status` and the Test A section of `report`.

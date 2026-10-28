@@ -20,6 +20,21 @@ and only then risk live money, capped at £500 (about $650–700), starting at �
 
 Worst case of the whole plan: about £600 (£100 data plus the £500 cap).
 
+## Money map: where every pound goes
+
+| When | Amount | What it pays for | How you pay | Status |
+|---|---|---|---|---|
+| Months 0–3 | £0 | Nothing. Free data sources; your PC runs the scanner (electricity roughly £2–3 a month, my estimate) | n/a | Decided |
+| Months 3–5 | Up to £100 in total (hard cap) | **One** data subscription for two months, chosen at month 3 to answer **one** question. Options (prices unconfirmed): wallet labels for the Spy test (Nansen-class, $69–100+ a month), market data (Birdeye Pro, about $9 a month), more RPC credits (Helius, about $49 a month) | On the provider's own website with your card. Monthly plan only, never annual. Reminder to cancel after month two. Keep month two only if month one showed a lift in the A/B test. If a tool costs more than the cap, do not buy it | **Provider not chosen yet** (decided at month 3) |
+| Months 5–6 | £200 | Trading money, in a **separate burner Solana wallet** used for nothing else | Buy SOL or USDC on a UK exchange you trust, then withdraw to that wallet | Exchange and wallet app **not chosen or verified**; decided at month 5 with click-by-click steps |
+| Months 6–12 | Up to £500 in total | The same wallet, topped up in steps (£350, then £500) | Top up the same wallet, only after the step-up rule passes and you say so | Gated |
+| Later | Up to £1,000 | Only if the £500 stretch validated | Same wallet | Gated |
+| Always | n/a | Records for tax: each swap may be a taxable disposal | The bot's log is the record; confirm with GOV.UK or an accountant | Not tax advice |
+
+Never use your main wallet. Never share a private key, recovery phrase or card details in any chat. £100 is about $138 at
+$1.30–1.40 per £1 (the live rate is unconfirmed). SOL versus USDC as the base asset is decided at month 5 (my lean: USDC keeps
+the £ value steadier, to be confirmed).
+
 ## Phases, with gates
 
 ### Phase 0: today (week 0)
