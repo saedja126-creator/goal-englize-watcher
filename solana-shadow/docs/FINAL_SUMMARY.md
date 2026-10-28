@@ -14,7 +14,7 @@ UK-based, thinks in pounds, not technical, works in sports media and social stra
 ## 2. Where we are (28 Oct 2026)
 | Item | State |
 |---|---|
-| Scanner, filters, logger, outcome tracker, weekly report, risk engine, background mode, watchdog, weekly Telegram notice | **Built.** 56 tests pass |
+| Scanner, filters, logger, outcome tracker, weekly report, risk engine, background mode, watchdog, weekly Telegram notice | **Built.** 57 tests pass |
 | Real API shapes (GeckoTerminal, DexScreener, RPC) | Checked on the user's PC on 27 Oct; parsers pass real samples |
 | Scanner running since 27 Oct? | **Unconfirmed.** Nobody has seen `status`, collected data or a weekly report |
 | Windows background mode and watchdog task over several days | Unverified |
@@ -38,11 +38,11 @@ UK-based, thinks in pounds, not technical, works in sports media and social stra
 
 Data worst case about £58 (under a £100 cap); live money capped at £500. Live money goes to a **separate burner Solana wallet** funded from a UK exchange (exchange, wallet app, SOL vs USDC decided at month 5; my lean USDC). Never the main wallet. Each swap may be a taxable disposal (UK; not tax advice).
 
-## 4. What we are adapting (new on 28 Oct)
+## 4. What we adapted (28 Oct): **preset B chosen and applied**
 | Topic | Before | Now | Status |
 |---|---|---|---|
-| Daily loss accepted | £10 (5%) | up to £30 a day | **User must choose preset A, B or C** |
-| One position | £14 (7%) | £20 (B) or £30 (C) | same choice |
+| Daily loss accepted | £10 (5%) | £30 a day, a fixed pound cap (`daily_loss_limit_gbp_max = 30`) | **Decided and applied: preset B** |
+| One position | £14 (7%) | £20 (10%), risk per trade up to 2% | **Decided and applied: preset B** |
 | Project stop | −30% (£60) | unchanged | decided |
 | Paid data | £100 up front | ladder: about £7, then about £51 only if it helps | decided |
 | Alerts | watchdog only | weekly Telegram notice added | built |
@@ -52,34 +52,28 @@ Data worst case about £58 (under a £100 cap); live money capped at £500. Live
 
 | Preset (£200 slice) | Position | Risk per trade | Daily limit | Rugs to hit daily limit | Rugs to hit −£60 stop | Month at 45% / 35% win rate |
 |---|---|---|---|---|---|---|
-| A (current code) | 7% = £14 | 1% | 5% = £10 | 1 | 5 | +21% / −24% |
-| **B (my lean)** | 10% = £20 | 2% | 15% = £30 | 2 | 3 | +31% / −33% |
+| A (was the default) | 7% = £14 | 1% | 5% = £10 | 1 | 5 | +21% / −24% |
+| **B (chosen 28 Oct)** | 10% = £20 | 2% | 15% = £30 | 2 | 3 | +31% / −33% |
 | C | 15% = £30 | 2.5% | 15% = £30 | 1 | 2 | +50% / −45% |
 
 Assumptions: 14% stop, 30% average win, 5 trades a day, 4% friction. Illustrative. In the 35% case B and C hit the project stop inside the month. Rug counts follow the code (a limit trips at equity ≤ limit), which corrects an earlier chat message that said 4 and 3.
 
-**To apply the user's choice** (only after they answer; tell them what changed): set in `thresholds.toml` `[risk]`:
+**Applied 28 Oct (the user said "$20 is my go-to", meaning £20 per position):** `thresholds.toml` `[risk]` now has `position_pct = 10`, `risk_per_trade_pct = 2.0`, `daily_loss_limit_pct = 15`, `project_stop_pct = 30`, plus a new `daily_loss_limit_gbp_max = 30`. The pound cap is in `risk.py` (`daily_limit_gbp`): the daily limit is the smaller of 15% and £30, so it matches the user's stated tolerance at every slice size. Tests updated; 57 pass; `python -m shadowbot slices` shows £20 a position and a £30 daily limit at £200.
 
-| Preset | position_pct | risk_per_trade_pct | daily_loss_limit_pct | project_stop_pct |
-|---|---|---|---|---|
-| A | 7 | 1.0 | 5 | 30 |
-| B | 10 | 2.0 | 15 | 30 |
-| C | 15 | 2.5 | 15 | 30 |
-
-Then update `tests/test_risk.py` (it assumes the 5% daily limit, e.g. a −£10 day on £200 trips DAILY_LOSS), run all tests, regenerate `python -m shadowbot slices`, and update MASTER_PLAN section 5 and the slides.
+**Open consequence to raise with the user before any step-up:** the position stays at 10% of the slice, so at £350 a position is £35 and at £500 it is £50. One full loss (a rug) is then bigger than the £30 daily limit, which the desk can only enforce after the loss. £200 is consistent with the user's tolerance; £350 and £500 are not unless they accept that. Treat each step-up as a fresh decision. Also tell the user plainly that B is a bigger-swing setting, not a better one: in the 35% win-rate case it reaches the −£60 project stop within a month.
 
 ## 5. First actions for Claude Code (in order)
-1. `git pull` on branch `claude/solana-shadow`; in `solana-shadow/` run `python -m unittest discover -s tests -v` (expect 56 pass).
+1. `git pull` on branch `claude/solana-shadow`; in `solana-shadow/` run `python -m unittest discover -s tests -v` (expect 57 pass).
 2. `python -m shadowbot status`. If not RUNNING: `python -m shadowbot start`. Confirm the scanner has collected since 27 Oct; if it started later, every date shifts.
 3. Run `python -m shadowbot report`; explain Test A (plumbing) to the user in plain English. Flag coverage and error rates.
 4. Check the Windows watchdog task (`python -m shadowbot watch` at login and every 15 minutes) and that the PC stays awake.
 5. Ask whether the user wants Telegram (optional; token and chat id go in `.env`, never in chat).
-6. Ask the user to pick preset A, B or C by Mon 9 Nov, then apply section 4.
+6. Preset B is already applied (section 4). Do not change it without asking.
 7. Sun 1 Nov: the first weekly report (`reports/weekly-2026-11-01.html`). Expect "too early to conclude".
 8. 9 Nov onward: Spy strategy (needs a free wallet list; GMGN rankings proposed).
 
 ## 6. Open inputs from the user
-Scanner running since 27 Oct and `status` output; Telegram yes/no; calendar reminders yes/no; preset A/B/C; three book titles; free wallet list source; £500 cap with £200 first; live GBP/USD rate; exchange, wallet app and SOL vs USDC (month 5).
+Scanner running since 27 Oct and `status` output; Telegram yes/no; calendar reminders yes/no; three book titles; free wallet list source; £500 cap with £200 first; live GBP/USD rate; exchange, wallet app and SOL vs USDC (month 5).
 
 ## 7. The presentation: how it moves between sessions
 - The artifact is private to the user's claude.ai account. A new Claude Code session on **the same account** can read and update it by URL (Artifact tool: `read`, then publish to the same URL with the downloaded folder as `root`).

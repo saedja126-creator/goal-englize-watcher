@@ -90,8 +90,8 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">Market risks and their controls</h2>
 <table style="font-size:28px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
 <tr style="background:#1B2536"><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">Risk</th><th style="width:58%;color:#F6F4EE;text-align:left;font-weight:700">How it is controlled</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Level</th></tr>
-<tr style="background:#FFFDF8"><td style="width:26%">Rug or sudden collapse</td><td style="width:58%">Position kept near 7% of the account, so one rug costs about 7%. Mint, freeze and holder checks run in code.</td><td style="width:16%;color:#A8500A">High</td></tr>
-<tr style="background:#EFEBDF"><td style="width:26%">Oversized positions</td><td style="width:58%">Risk 0.5–1% per trade. Daily loss limit about 5%. Project stop at −30% of the live slice.</td><td style="width:16%;color:#A8500A">High</td></tr>
+<tr style="background:#FFFDF8"><td style="width:26%">Rug or sudden collapse</td><td style="width:58%">Position kept near 10% of the account, so one rug costs about 10%. Mint, freeze and holder checks run in code.</td><td style="width:16%;color:#A8500A">High</td></tr>
+<tr style="background:#EFEBDF"><td style="width:26%">Oversized positions</td><td style="width:58%">Risk up to 2% per trade. Daily loss limit 15%, never above £30. Project stop at −30% of the live slice.</td><td style="width:16%;color:#A8500A">High</td></tr>
 <tr style="background:#FFFDF8"><td style="width:26%">Thin liquidity and slippage</td><td style="width:58%">Position capped near 1% of pool liquidity. 2% slippage cap. Costs deducted in every report.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
 <tr style="background:#EFEBDF"><td style="width:26%">Late signal when copying wallets</td><td style="width:58%">Measured at the +30s checkpoint and compared with a random-entry control group.</td><td style="width:16%;color:#2E6FB7">Medium</td></tr>
 </table>
@@ -133,14 +133,14 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 </div>
 <div style="display:flex;align-items:center;gap:32px">
 <div style="width:420px;display:flex;flex-direction:column;gap:4px">
-<p style="font-size:32px;font-weight:600;color:#F6F4EE">7% per trade</p>
-<p style="font-size:24px;color:#A9B6C8">my proposal</p>
+<p style="font-size:32px;font-weight:600;color:#F6F4EE">10% per trade</p>
+<p style="font-size:24px;color:#A9B6C8">your choice (preset B)</p>
 </div>
-<div style="width:230px;height:72px;background:#6FB1F0;border-radius:8px"></div>
-<p style="width:200px;font-size:48px;font-weight:700;color:#6FB1F0">−20%</p>
+<div style="width:312px;height:72px;background:#6FB1F0;border-radius:8px"></div>
+<p style="width:200px;font-size:48px;font-weight:700;color:#6FB1F0">−27%</p>
 </div>
 </div>
-<p style="font-size:30px;line-height:1.4;color:#F6F4EE">One rug costs −40%, −25% or −7% of the account.</p>
+<p style="font-size:30px;line-height:1.4;color:#F6F4EE">One rug costs −40%, −25% or −10% of the account.</p>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">Arithmetic: 1 − (1 − size)³, assuming each rug takes the whole position. Illustrative.</p>
 <aside>A stop-loss only helps if the price falls through your stop gradually. A rug can take the token to near zero in one step, so the protection is a small position. Three rugs at 40 percent leaves 21.6 percent of the account, a loss of 78 percent.</aside>
 </section></div>
@@ -168,7 +168,7 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 </div>
 </div>
 <div style="background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px">
-<p style="font-size:26px;line-height:1.45;color:#3E4A5C">Assumptions: 14% stop, 30% average win, 7% position, 5 trades a day, 4% round-trip friction. Edge per trade after costs: +1.8% of the stake at 45%, −2.6% at 35%.</p>
+<p style="font-size:26px;line-height:1.45;color:#3E4A5C">Assumptions: 14% stop, 30% average win, 7% position (preset A; your preset B at 10% gives +31% and −33%), 5 trades a day, 4% round-trip friction. Edge per trade after costs: +1.8% of the stake at 45%, −2.6% at 35%.</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Illustrative arithmetic. Not a forecast and not a backtest.</p>
 <aside>The same rules, the same costs, and only the win rate changes. At 45 percent the month is about plus 21 percent. At 35 percent it is about minus 24 percent. That sensitivity is why the shadow test and the cost assumptions matter more than any forecast.</aside>
@@ -394,14 +394,14 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <div class="slide-wrap" id="s-slices"><section class="slide" id="slices" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
 <h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">The money path by slice size, in pounds</h2>
 <table style="font-size:26px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
-<tr style="background:#1B2536"><th style="width:22%;color:#F6F4EE;text-align:left;font-weight:700">Live slice</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Per trade (7%)</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Stop at −30%</th><th style="width:20%;color:#F6F4EE;text-align:left;font-weight:700">Good month</th><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">First live months</th></tr>
-<tr style="background:#FFFDF8"><td style="width:22%">£200 (first step)</td><td style="width:16%">£14</td><td style="width:16%">£60</td><td style="width:20%;color:#2E6FB7">£20–40</td><td style="width:26%;color:#A8500A">−£200 to +£80</td></tr>
-<tr style="background:#EFEBDF"><td style="width:22%">£350</td><td style="width:16%">£25</td><td style="width:16%">£105</td><td style="width:20%;color:#2E6FB7">£35–70</td><td style="width:26%;color:#A8500A">−£350 to +£140</td></tr>
-<tr style="background:#FFFDF8"><td style="width:22%">£500 (the cap)</td><td style="width:16%">£35</td><td style="width:16%">£150</td><td style="width:20%;color:#2E6FB7">£50–100</td><td style="width:26%;color:#A8500A">−£500 to +£200</td></tr>
-<tr style="background:#EFEBDF"><td style="width:22%">£1,000 (much later)</td><td style="width:16%">£70</td><td style="width:16%">£300</td><td style="width:20%;color:#2E6FB7">£100–200</td><td style="width:26%;color:#A8500A">−£1,000 to +£400</td></tr>
+<tr style="background:#1B2536"><th style="width:20%;color:#F6F4EE;text-align:left;font-weight:700">Live slice</th><th style="width:14%;color:#F6F4EE;text-align:left;font-weight:700">Per trade (10%)</th><th style="width:14%;color:#F6F4EE;text-align:left;font-weight:700">Daily limit</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">Stop at −30%</th><th style="width:20%;color:#F6F4EE;text-align:left;font-weight:700">Good month</th><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">First live months</th></tr>
+<tr style="background:#FFFDF8"><td style="width:20%">£200 (first step)</td><td style="width:14%">£20</td><td style="width:14%">£30</td><td style="width:16%">£60</td><td style="width:20%;color:#2E6FB7">£20–40</td><td style="width:26%;color:#A8500A">−£200 to +£80</td></tr>
+<tr style="background:#EFEBDF"><td style="width:20%">£350</td><td style="width:14%">£35</td><td style="width:14%">£30</td><td style="width:16%">£105</td><td style="width:20%;color:#2E6FB7">£35–70</td><td style="width:26%;color:#A8500A">−£350 to +£140</td></tr>
+<tr style="background:#FFFDF8"><td style="width:20%">£500 (the cap)</td><td style="width:14%">£50</td><td style="width:14%">£30</td><td style="width:16%">£150</td><td style="width:20%;color:#2E6FB7">£50–100</td><td style="width:26%;color:#A8500A">−£500 to +£200</td></tr>
+<tr style="background:#EFEBDF"><td style="width:20%">£1,000 (much later)</td><td style="width:14%">£100</td><td style="width:14%">£30</td><td style="width:16%">£300</td><td style="width:20%;color:#2E6FB7">£100–200</td><td style="width:26%;color:#A8500A">−£1,000 to +£400</td></tr>
 </table>
 <div style="background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px">
-<p style="font-size:30px;line-height:1.4;color:#1B2536"><b>Step-up rule:</b> move to the next slice only after four live weeks at the current one that match paper results, with the stop untouched.</p>
+<p style="font-size:30px;line-height:1.4;color:#1B2536"><b>Step-up rule:</b> move up only after four live weeks that match paper results, with the stop untouched. The £30 daily limit stays fixed, so from £350 up one full loss is bigger than a day's limit: re-decide before each step.</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Good month and range are my judgement, not forecasts. £1 is roughly $1.30–1.40 (check the live rate).</p>
 <aside>The same rules at four slice sizes. The percentages are identical; only the pound amounts change. A bigger slice does not improve the odds, it increases what is at stake. The first-live-months range of minus 100 percent to plus 40 percent is a judgement, not a calculation.</aside>
@@ -411,15 +411,15 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px">
 <div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
 <h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Position size</h3>
-<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 7% of the account per trade, capped near 1% of pool liquidity.</p>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 10% of the account per trade (£20 on £200), capped near 1% of pool liquidity.</p>
 </div>
 <div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
 <h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Risk per trade</h3>
-<p style="font-size:28px;line-height:1.4;color:#E1E7F0">0.5–1% of the account at the stop.</p>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">Up to 2% of the account at the stop.</p>
 </div>
 <div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
 <h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Daily loss limit</h3>
-<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 5%. The desk halts and waits for you.</p>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">15% of the account, never above £30. The desk halts and waits for you.</p>
 </div>
 <div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
 <h3 style="font-size:32px;font-weight:700;color:#F28C38">Project stop</h3>
@@ -438,25 +438,25 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <aside>These limits live in code, not in a prompt, so nothing can talk the system out of them. The blue cards limit how much any single trade can cost. The orange cards limit how much the whole project can lose.</aside>
 </section></div>
 <div class="slide-wrap" id="s-presets"><section class="slide" id="presets" data-transition="fade" style="background:#F6F4EE;color:#1B2536;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
-<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">Adapting: three risk presets for a £200 slice</h2>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">You chose preset B: £20 a position, £30 a day</h2>
 <table style="font-size:25px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
 <tr style="background:#1B2536"><th style="width:15%;color:#F6F4EE;text-align:left;font-weight:700">Preset</th><th style="width:16%;color:#F6F4EE;text-align:left;font-weight:700">One position</th><th style="width:15%;color:#F6F4EE;text-align:left;font-weight:700">Daily limit</th><th style="width:18%;color:#F6F4EE;text-align:left;font-weight:700">Rugs to hit daily limit</th><th style="width:18%;color:#F6F4EE;text-align:left;font-weight:700">Rugs to hit −£60 stop</th><th style="width:18%;color:#F6F4EE;text-align:left;font-weight:700">Month at 45% / 35% win rate</th></tr>
-<tr style="background:#FFFDF8"><td><b>A</b> today</td><td>7% = £14</td><td>5% = £10</td><td>1</td><td>5</td><td><span style="color:#2E6FB7">+21%</span> / <span style="color:#A8500A">−24%</span></td></tr>
-<tr style="background:#EFEBDF"><td><b>B</b> my lean</td><td>10% = £20</td><td>15% = £30</td><td>2</td><td>3</td><td><span style="color:#2E6FB7">+31%</span> / <span style="color:#A8500A">−33%</span></td></tr>
+<tr style="background:#FFFDF8"><td><b>A</b> was the default</td><td>7% = £14</td><td>5% = £10</td><td>1</td><td>5</td><td><span style="color:#2E6FB7">+21%</span> / <span style="color:#A8500A">−24%</span></td></tr>
+<tr style="background:#F6E3CC"><td><b>B</b> chosen 28 Oct</td><td>10% = £20</td><td>15% = £30</td><td>2</td><td>3</td><td><span style="color:#2E6FB7">+31%</span> / <span style="color:#A8500A">−33%</span></td></tr>
 <tr style="background:#FFFDF8"><td><b>C</b></td><td>15% = £30</td><td>15% = £30</td><td>1</td><td>2</td><td><span style="color:#2E6FB7">+50%</span> / <span style="color:#A8500A">−45%</span></td></tr>
 </table>
 <div style="display:flex;gap:32px;align-items:stretch">
 <div style="flex:1;background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
-<h3 style="font-size:32px;font-weight:700;color:#2E6FB7">What changes</h3>
-<p style="font-size:26px;line-height:1.4;color:#3E4A5C">You can lose up to £30 in a day, so the daily limit moves from £10 to £30 in B and C. Bigger positions make a win bigger and a loss bigger, in the same proportion.</p>
+<h3 style="font-size:32px;font-weight:700;color:#2E6FB7">What changed</h3>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">Position £14 to £20, daily limit £10 to £30. The £30 is a fixed pound cap, so it does not grow with the slice. Wins and losses both get bigger in the same proportion.</p>
 </div>
 <div style="flex:1;background:#FFFDF8;border:1px solid #DDD8CB;border-radius:16px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
 <h3 style="font-size:32px;font-weight:700;color:#A8500A">What does not change</h3>
-<p style="font-size:26px;line-height:1.4;color:#3E4A5C">The −30% project stop (£60) stays in every preset. In the 35% case, B and C would reach it inside the month and the desk would halt.</p>
+<p style="font-size:26px;line-height:1.4;color:#3E4A5C">The −30% project stop (£60) stays. In the 35% win-rate case B reaches it inside the month and the desk halts. Not a forecast: it shows what your choice risks.</p>
 </div>
 </div>
-<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Illustrative arithmetic: 14% stop, 30% average win, 5 trades a day, 4% friction. Not a forecast. Your choice is still open.</p>
-<aside>Three ways to size the same strategy for a 200 pound slice. A is the current code default. B raises the position to 20 pounds and the daily limit to 30 pounds, which matches the tolerance you gave. C goes to 30 pounds a position and one rug alone reaches the 30 pound daily limit. The month columns scale with position size, so a bigger size amplifies a good win rate and a bad one equally. The 30 percent project stop is 60 pounds in every preset. Rug counts come from the code's rule that a limit is hit when the loss equals it, so this corrects the earlier figure of 4 and 3 to 3 and 2 for the project stop. The choice between A, B and C is still open.</aside>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Illustrative arithmetic: 14% stop, 30% average win, 5 trades a day, 4% friction. Not a forecast. Applied in thresholds.toml on 28 Oct.</p>
+<aside>Three ways to size the same strategy for a 200 pound slice. A was the code default. You chose B on 28 October: a 20 pound position and a 30 pound daily limit, which matches the tolerance you gave. It is applied in the settings file, with a fixed 30 pound cap on the daily limit. C goes to 30 pounds a position and one rug alone reaches the 30 pound daily limit. The month columns scale with position size, so a bigger size amplifies a good win rate and a bad one equally. The 30 percent project stop is 60 pounds in every preset. Rug counts come from the code's rule that a limit is hit when the loss equals it, so this corrects the earlier figure of 4 and 3 to 3 and 2 for the project stop. The choice is made.</aside>
 </section></div>
 <div class="slide-wrap" id="s-reality"><section class="slide" id="reality" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
 <h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Is this the right strategy? What the evidence says</h2>
@@ -477,18 +477,18 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#1B2536">What we are adapting, and what is decided</h2>
 <table style="font-size:25px;color:#1B2536;font-family:'Public Sans', Arial, sans-serif">
 <tr style="background:#1B2536"><th style="width:26%;color:#F6F4EE;text-align:left;font-weight:700">Topic</th><th style="width:24%;color:#F6F4EE;text-align:left;font-weight:700">Before</th><th style="width:30%;color:#F6F4EE;text-align:left;font-weight:700">Now</th><th style="width:20%;color:#F6F4EE;text-align:left;font-weight:700">Status</th></tr>
-<tr style="background:#FFFDF8"><td>Daily loss you accept</td><td>£10 (5%)</td><td>Up to £30 a day</td><td style="color:#A8500A">You choose A, B or C</td></tr>
-<tr style="background:#EFEBDF"><td>Size of one position</td><td>£14 (7%)</td><td>£20 (B) or £30 (C)</td><td style="color:#A8500A">You choose A, B or C</td></tr>
+<tr style="background:#FFFDF8"><td>Daily loss you accept</td><td>£10 (5%)</td><td>£30 a day, fixed pound cap</td><td style="color:#2E6FB7">Decided: B, applied</td></tr>
+<tr style="background:#EFEBDF"><td>Size of one position</td><td>£14 (7%)</td><td>£20 (preset B), 10%</td><td style="color:#2E6FB7">Decided: B, applied</td></tr>
 <tr style="background:#FFFDF8"><td>Project stop</td><td>−30% (£60)</td><td>Unchanged</td><td style="color:#2E6FB7">Decided</td></tr>
 <tr style="background:#EFEBDF"><td>Paid data</td><td>£100 up front</td><td>Ladder: about £7, then about £51 only if it helps</td><td style="color:#2E6FB7">Decided</td></tr>
 <tr style="background:#FFFDF8"><td>Alerts</td><td>Watchdog only</td><td>Weekly Telegram notice added</td><td style="color:#2E6FB7">Built</td></tr>
 <tr style="background:#EFEBDF"><td>Strategy</td><td>Shadow test first</td><td>Unchanged after the evidence check</td><td style="color:#2E6FB7">Decided</td></tr>
 </table>
 <div style="background:#1B2536;border-radius:16px;padding:28px 36px">
-<p style="font-size:28px;line-height:1.45;color:#F6F4EE"><b style="color:#F28C38">One decision from you:</b> pick A, B or C by Mon 9 Nov. Nothing live is affected, because no money trades until about 29 Mar 2027. Once you choose, the limits in <b>thresholds.toml</b> and the tests are updated to match.</p>
+<p style="font-size:28px;line-height:1.45;color:#F6F4EE"><b style="color:#F28C38">Decided 28 Oct:</b> preset B is applied in <b>thresholds.toml</b>, with tests (57 pass). Nothing live is affected, because no money trades until about 29 Mar 2027. From £350 up, one full loss exceeds £30, so we re-decide before each step-up.</p>
 </div>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Shadow Desk · master plan · 28 Oct 2026</p>
-<aside>A single summary of every change made since the first version of the plan. The daily loss limit and the position size depend on one choice from you between presets A, B and C. The project stop, the strategy and the paid-data ladder are decided. The weekly Telegram notice is built. Nothing live is affected by the choice, because live trading starts around 29 March 2027 at the earliest.</aside>
+<aside>A single summary of every change made since the first version of the plan. You chose preset B, so the position is 20 pounds and the daily loss limit is 30 pounds, applied in the settings. The project stop, the strategy and the paid-data ladder are decided. The weekly Telegram notice is built. Nothing live is affected by the choice, because live trading starts around 29 March 2027 at the earliest.</aside>
 </section></div>
 <div class="slide-wrap" id="s-status"><section class="slide" id="status" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
 <h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Where things stand today</h2>
@@ -500,7 +500,7 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <li>Outcome tracker and weekly report</li>
 <li>Risk engine and slice ladder</li>
 <li>Background mode and a watchdog that restarts it</li>
-<li>56 tests, including real API samples from 27 Oct</li>
+<li>57 tests, including real API samples from 27 Oct</li>
 </ul>
 </div>
 <div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:36px 40px">
@@ -533,7 +533,7 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 <li><b>By Fri 30 Oct:</b> optional, set up Telegram alerts</li>
 <li><b>Sun 1 Nov:</b> the first weekly report arrives. Expect “too early to conclude”</li>
 <li><b>Mon 2 Nov:</b> send me the headline lines so I can explain them</li>
-<li><b>By Mon 9 Nov:</b> pick the risk preset (A, B or C), book titles, the free wallet list (GMGN), the £500 cap, the live GBP/USD rate</li>
+<li><b>By Mon 9 Nov:</b> book titles, the free wallet list (GMGN), the £500 cap, the live GBP/USD rate</li>
 </ol>
 <div style="width:600px;display:flex;flex-direction:column;gap:20px;background:#1B2536;border-radius:16px;padding:40px">
 <h3 style="font-size:36px;font-weight:700;color:#F28C38">What to expect</h3>
@@ -546,7 +546,7 @@ x-shape[kind="arrow-right"]{clip-path:polygon(0 28%,60% 28%,60% 0,100% 50%,60% 1
 </div>
 <p style="font-size:30px;font-weight:700;line-height:1.4;color:#1B2536">No returns are promised. The test exists to find out.</p>
 <p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B6676">Shadow Desk · master plan · 28 Oct 2026</p>
-<aside>The dated to-do list. Today: check the scanner and update the code. By Friday: optionally set up Telegram. Sunday 1 November: the first weekly report, which will say it is too early to conclude. Monday: send the headline lines. By 9 November: your choice of risk preset A, B or C, the book titles, the free wallet list, the 500 pound cap and the live exchange rate. Nothing is bought or charged before 15 February 2027.</aside>
+<aside>The dated to-do list. Today: check the scanner and update the code. By Friday: optionally set up Telegram. Sunday 1 November: the first weekly report, which will say it is too early to conclude. Monday: send the headline lines. By 9 November: the book titles, the free wallet list, the 500 pound cap and the live exchange rate. Nothing is bought or charged before 15 February 2027.</aside>
 </section></div>
 <div class="ui"><span id="n"></span> &nbsp;·&nbsp; ← → to move &nbsp;·&nbsp; Print (Ctrl+P) and choose Save as PDF to keep a copy</div>
 <script>

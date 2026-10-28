@@ -22,7 +22,8 @@ class TestSliceTable(unittest.TestCase):
     def test_table_matches_the_presentation(self):
         rows = {int(x["slice"]): x for x in limits_table(CFG)}
         self.assertEqual([(rows[s]["per_trade"], rows[s]["project_stop"]) for s in (200, 350, 500, 1000)],
-                         [(14, 60), (24.5, 105), (35, 150), (70, 300)])
+                         [(20, 60), (35, 105), (50, 150), (100, 300)])
+        self.assertEqual([rows[s]["daily_limit"] for s in (200, 350, 500, 1000)], [30, 30, 30, 30])  # 15%, capped at £30
         self.assertEqual((rows[200]["good_low"], rows[200]["good_high"]), (20, 40))
         self.assertEqual((rows[1000]["range_low"], rows[1000]["range_high"]), (-1000, 400))
 
@@ -33,19 +34,19 @@ class TestSliceTable(unittest.TestCase):
         with contextlib.redirect_stdout(buf):
             self.assertEqual(main(["slices"]), 0)
         out = buf.getvalue()
-        self.assertIn("£25", out)
+        self.assertIn("£35", out)
         self.assertIn("-£1000 to +£400", out)
 
 
 class TestSizing(unittest.TestCase):
     def test_position_cap_binds_at_default_stop(self):
         size, binding = position_size_gbp(200, 14, 50_000, R)
-        self.assertAlmostEqual(size, 14.0)
+        self.assertAlmostEqual(size, 20.0)
         self.assertEqual(binding, "position_pct")
 
     def test_risk_cap_binds_with_a_wide_stop(self):
         size, binding = position_size_gbp(200, 50, 50_000, R)
-        self.assertAlmostEqual(size, 4.0)  # 1% of 200 = £2 at risk, a 50% stop => £4
+        self.assertAlmostEqual(size, 8.0)  # 2% of 200 = £4 at risk, a 50% stop => £8
         self.assertEqual(binding, "risk_per_trade")
 
     def test_liquidity_cap_binds_in_thin_pools(self):
@@ -66,7 +67,7 @@ class TestEngine(unittest.TestCase):
 
     def test_order_allowed_with_size_and_reason_for_cap(self):
         d = self.live.allow_order(pool_liq_usd=50_000, now=T0)
-        self.assertEqual((d.allowed, d.size_gbp, d.binding), (True, 14.0, "position_pct"))
+        self.assertEqual((d.allowed, d.size_gbp, d.binding), (True, 20.0, "position_pct"))
 
     def test_one_position_at_a_time(self):
         self.live.on_open()
@@ -80,7 +81,7 @@ class TestEngine(unittest.TestCase):
 
     def test_daily_loss_halts_and_stays_halted_until_reset(self):
         self.live.on_open()
-        self.assertEqual(self.live.on_close(-10, -70, now=T0 + 3600), "DAILY_LOSS")  # 5% of £200
+        self.assertEqual(self.live.on_close(-30, -150, now=T0 + 3600), "DAILY_LOSS")  # £30 on £200
         d = self.live.allow_order(pool_liq_usd=50_000, now=T0 + 3700)
         self.assertEqual(d.reasons, ["HALTED:DAILY_LOSS"])
         # a new engine object (a restart) still sees the halt, and a new day does not clear it
@@ -93,7 +94,7 @@ class TestEngine(unittest.TestCase):
 
     def test_project_stop_after_a_slow_bleed(self):
         reason = None
-        for i in range(12):  # £5 a day stays under the 5% daily limit, but 12 days ends at £140 = the project stop
+        for i in range(12):  # £5 a day stays under the £30 daily limit, but 12 days ends at £140 = the project stop
             self.live.on_open()
             reason = self.live.on_close(-5, -35, now=T0 + i * DAY)
             if i < 11:
@@ -103,7 +104,15 @@ class TestEngine(unittest.TestCase):
 
     def test_a_faster_bleed_trips_the_daily_limit_first(self):
         self.live.on_open()
-        self.assertEqual(self.live.on_close(-10, -70, now=T0), "DAILY_LOSS")
+        self.assertIsNone(self.live.on_close(-20, -100, now=T0))  # one full rug at £20 is under the £30 limit
+        self.live.on_open()
+        self.assertEqual(self.live.on_close(-10, -50, now=T0 + 600), "DAILY_LOSS")  # £30 in a day
+
+    def test_daily_limit_is_capped_at_30_pounds_on_bigger_slices(self):
+        self.live.s["slice_index"] = 2
+        self.live.s["slice_start_equity"] = self.live.s["equity"] = self.live.s["day_start_equity"] = 500.0
+        self.live.on_open()
+        self.assertEqual(self.live.on_close(-30, -60, now=T0), "DAILY_LOSS")  # 15% of £500 would be £75; the cap says £30
 
     def test_paper_and_live_are_separate_books(self):
         self.paper.on_open()

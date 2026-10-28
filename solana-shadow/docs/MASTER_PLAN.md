@@ -49,11 +49,11 @@ holds every slide's content as text.
 | When | Action | Who | Done when |
 |---|---|---|---|
 | **Wed 28 Oct 2026** | Run `python -m shadowbot status`. If it does not say RUNNING, run `python -m shadowbot start` | You, or Claude Code on your PC | Status says RUNNING and "last scan cycle" is under 2 minutes ago |
-| **Wed 28 Oct** | Update the code: `git pull` on branch `claude/solana-shadow`, run the tests, restart the scanner. This adds the weekly Telegram notice | Claude Code on your PC | 56 tests pass; `status` says RUNNING |
+| **Wed 28 Oct** | Update the code: `git pull` on branch `claude/solana-shadow`, run the tests, restart the scanner. This adds the weekly Telegram notice | Claude Code on your PC | 57 tests pass; `status` says RUNNING |
 | **By Fri 30 Oct** | *Optional:* set up Telegram alerts (steps in section 6) | You with Claude Code | A test message arrives on your phone |
 | **Sun 1 Nov, evening UTC** | First weekly report arrives (week 1, Mon 26 Oct to Sun 1 Nov). Expect "too early to conclude" | The scanner | `reports/weekly-2026-11-01.html` exists (and a Telegram notice if set up) |
 | **Mon 2 Nov** | Send the headline lines of the report to the assistant for a plain-English explanation | You | Explained |
-| **By Mon 9 Nov** | Pick the risk preset A, B or C (section 9b); send: the three book titles (or cover photos); confirm the free wallet list for the Spy strategy (GMGN rankings); confirm the £500 live cap with £200 first; give the live GBP/USD rate for `usd_per_gbp` in `thresholds.toml` | You | All four answered |
+| **By Mon 9 Nov** | Send: the three book titles (or cover photos); confirm the free wallet list for the Spy strategy (GMGN rankings); confirm the £500 live cap with £200 first; give the live GBP/USD rate for `usd_per_gbp` in `thresholds.toml` | You | All four answered |
 | **9 Nov to 6 Dec** | Build the Spy strategy in shadow mode | Assistant | Spy rows appear in the weekly report |
 
 **What to expect in the first weeks:** week 1 is plumbing only (is it running, error rates, how many tokens it sees). No conclusion
@@ -126,12 +126,12 @@ UK); SOL versus USDC as the base asset (my lean: USDC keeps the £ value steadie
 
 **In pounds (good cases before losses, not forecasts):**
 
-| Live slice | Per trade (7%) | Stop at −30% | Good month (10–20%) | First live months range |
-|---|---|---|---|---|
-| £200 (first step) | £14 | £60 | £20–40 | −£200 to +£80 |
-| £350 | £25 | £105 | £35–70 | −£350 to +£140 |
-| £500 (the cap) | £35 | £150 | £50–100 | −£500 to +£200 |
-| £1,000 (much later) | £70 | £300 | £100–200 | −£1,000 to +£400 |
+| Live slice | Per trade (10%) | Daily limit | Stop at −30% | Good month (10–20%) | First live months range |
+|---|---|---|---|---|---|
+| £200 (first step) | £20 | £30 | £60 | £20–40 | −£200 to +£80 |
+| £350 | £35 | £30 | £105 | £35–70 | −£350 to +£140 |
+| £500 (the cap) | £50 | £30 | £150 | £50–100 | −£500 to +£200 |
+| £1,000 (much later) | £100 | £30 | £300 | £100–200 | −£1,000 to +£400 |
 
 **Why not more:** returns scale with capital. At £500, even a good month is £50–100. A $69 tool needs a 34.5% month on $200 just to
 pay for itself, so paid data is a capped **research cost**, not an investment. The most likely single outcome of a first version is
@@ -207,21 +207,21 @@ liquidity at +30 s, +5 min, +15 min, +1 h.
 
 | Rule | Value |
 |---|---|
-| Biggest position | about 7% of the slice (preset A, the current code default; B is 10%, C is 15%: see 9b), and under 1% of the pool's liquidity |
-| Risk per trade | 0.5–1% of the slice at the stop |
-| Daily loss limit | about 5% (preset A, the current code default): the desk halts until you reset it. Presets B and C raise it to 15% (£30): see 9b |
+| Biggest position | 10% of the slice (preset B, chosen 28 Oct), and under 1% of the pool's liquidity |
+| Risk per trade | up to 2% of the slice at the stop |
+| Daily loss limit | 15% of the slice but never above **£30**: the desk halts until you reset it |
 | Project stop | −30% of the live slice: live trading halts |
 | Positions at once | one |
 | Halts | persist across restarts and new days until a person resets them |
 | Keys | none in the bot during shadow; later a separate burner wallet holding only the slice |
 
 **Why position size matters most:** a stop-loss cannot save a token that collapses in one step. Loss of the whole account after three
-rugs in a row: 40% per trade = −78%; 25% = −58%; 7% = −20%.
+rugs in a row: 40% per trade = −78%; 25% = −58%; 10% (preset B) = −27%; 7% = −20%.
 
-**Why win rate matters:** with a 14% stop, 30% average win, 7% position, 5 trades a day and 4% friction, a 45% win rate gives about +21% a
-month and a 35% win rate about −24%. A 10-point swing flips the month. 100 trades only pins a win rate to about ±10 points.
+**Why win rate matters:** with a 14% stop, 30% average win, 5 trades a day and 4% friction, a 7% position (preset A) gives about +21% a
+month at a 45% win rate and about −24% at 35% (preset B, 10%: +31% and −33%). A 10-point swing flips the month. 100 trades only pins a win rate to about ±10 points.
 
-### 9b. ADAPTATION (28 Oct): you can accept up to £30 loss in a day
+### 9b. ADAPTATION (28 Oct): up to £30 loss in a day accepted; preset B chosen
 
 The user said: "I don't want smaller wins. I don't mind if I lost up to 30 pound in one day." That is a **tolerance**, not an edge. Larger
 positions make wins and losses bigger in the same proportion; only the win rate decides which one dominates. Three presets for a £200 slice
@@ -229,25 +229,20 @@ positions make wins and losses bigger in the same proportion; only the win rate 
 
 | Preset | One position | Risk per trade | Daily limit | Rugs to hit daily limit | Rugs to hit the −£60 project stop | Month at 45% / 35% win rate |
 |---|---|---|---|---|---|---|
-| **A** (current code) | 7% = £14 | 1% | 5% = £10 | 1 | 5 | +21% / −24% |
-| **B** (my lean) | 10% = £20 | 2% | 15% = £30 | 2 | 3 | +31% / −33% |
+| **A** (was the default) | 7% = £14 | 1% | 5% = £10 | 1 | 5 | +21% / −24% |
+| **B** (CHOSEN 28 Oct) | 10% = £20 | 2% | 15% = £30 | 2 | 3 | +31% / −33% |
 | **C** | 15% = £30 | 2.5% | 15% = £30 | 1 | 2 | +50% / −45% |
 
 - Month figures use the same assumptions as section 9 (14% stop, 30% average win, 5 trades a day, 4% friction). Illustrative, not forecasts.
 - The −30% project stop (£60) is the same in every preset. In the 35% case B and C reach it inside the month and the desk halts.
 - Rug counts follow the code: a limit triggers when equity is at or below the limit, so exactly £60 of losses trips the project stop. (An earlier chat
   message said 4 and 3 for B and C; the code rule gives 3 and 2.)
-- **Status: the user has not chosen.** Nothing live is affected until about 29 Mar 2027.
-- **When the user chooses**, change `[risk]` in `thresholds.toml` and tell the user what changed:
-
-| Preset | position_pct | risk_per_trade_pct | daily_loss_limit_pct | project_stop_pct |
-|---|---|---|---|---|
-| A | 7 | 1.0 | 5 | 30 |
-| B | 10 | 2.0 | 15 | 30 |
-| C | 15 | 2.5 | 15 | 30 |
-
-  `tests/test_risk.py` assumes the 5% daily limit (for example, a −£10 day on £200 trips DAILY_LOSS), so B or C needs those tests updated.
-  Then regenerate the slice table (`python -m shadowbot slices`) and update section 5 and slides 17–18.
+- **Status: the user chose B on 28 Oct ("$20 is my go-to"; read as £20 per position).** Applied in `thresholds.toml` `[risk]` (`position_pct = 10`,
+  `risk_per_trade_pct = 2.0`, `daily_loss_limit_pct = 15`, `project_stop_pct = 30`) with a new **`daily_loss_limit_gbp_max = 30`** so the daily limit is
+  the smaller of 15% and £30 at any slice size. `shadowbot/risk.py` (`daily_limit_gbp`) and `tests/test_risk.py` updated; 57 tests pass.
+- **Consequence to re-decide at each step-up:** the position stays 10% of the slice (£35 at £350, £50 at £500), so one full loss exceeds the £30 daily limit,
+  which can only act after the loss. £200 is consistent with the tolerance; larger slices are not unless the user accepts it.
+- B is a bigger-swing setting, not a better one: in the 35% win-rate case it reaches the −£60 project stop inside the month.
 
 **Strategy check (28 Oct, from web search; figures are third-party and unverified):** I found nothing that beats testing for free first.
 
@@ -265,7 +260,7 @@ positions make wins and losses bigger in the same proportion; only the win rate 
 
 | Built | Not yet verified | Not built yet |
 |---|---|---|
-| Scanner, filters, logger; outcome tracker; weekly report; risk engine and slice ladder; background mode and watchdog; weekly Telegram notice (28 Oct); 56 tests including real API samples captured 27 Oct | Whether it keeps up with new tokens (coverage); Windows background mode over several days; API prices and limits (third-party snippets); the live GBP/USD rate; accuracy of any wallet-data provider | Paper-trading executor; Spy strategy; paid-data A/B arm; dev-wallet % and LP-lock checks; Calendar reminders; loss-limit alerts |
+| Scanner, filters, logger; outcome tracker; weekly report; risk engine and slice ladder; background mode and watchdog; weekly Telegram notice (28 Oct); 57 tests including real API samples captured 27 Oct | Whether it keeps up with new tokens (coverage); Windows background mode over several days; API prices and limits (third-party snippets); the live GBP/USD rate; accuracy of any wallet-data provider | Paper-trading executor; Spy strategy; paid-data A/B arm; dev-wallet % and LP-lock checks; Calendar reminders; loss-limit alerts |
 
 On 27 Oct, Claude Code on the user's PC ran the real `doctor` check, captured real GeckoTerminal, DexScreener and RPC responses, fixed
 the holder check, and added the watchdog. **Nobody has yet reviewed the collected data, `status` output or a weekly report.**
@@ -280,7 +275,6 @@ the holder check, and added the watchdog. **Nobody has yet reviewed the collecte
 | Telegram yes or no | 30 Oct | Decides whether weekly and alert pings reach your phone |
 | Three book titles or cover photos | 9 Nov | Chapters on scam tokens, position sizing and on-chain wallet analysis help most |
 | Free wallet list for Spy (GMGN rankings) | 9 Nov | The Spy build starts that day |
-| **Risk preset A, B or C** (section 9b; my lean B) | 9 Nov | Sets position size and the daily loss limit |
 | £500 cap, £200 first | 9 Nov | Sets the risk limits |
 | Live GBP/USD rate | 9 Nov | Used for the liquidity cap |
 | Which single question the paid data answers | 26 Jan 2027 | Default: does a paid wallet list beat the free one for Spy? |
@@ -325,10 +319,10 @@ not a restart; the watchdog task covers restarts.
 1. **Cover.** Shadow Desk: risk, benefits and trajectory for a Solana memecoin scanner. Shadow mode first: nothing here trades or holds a wallet. Every figure is a scenario, not a forecast.
 2. **The bottom line.** Test for free first. Put money in only when the data says so. £0 of capital at risk during the 3-month shadow test and paper trading; £500 live cap (roughly $650–700), first £200 only after the gates are met, then in steps; 0 returns promised. Plus about £100 for two paid-data months, a research cost.
 3. **What the shadow desk does.** Scan (new tokens every 30 s) → Check (hard facts in code) → Log (every decision with the check that fired) → Track (+30 s, +5 m, +15 m, +1 h) → Report (weekly: do the filters work? does a trigger beat the control?). No wallet, no orders, no keys; runs in the background.
-4. **Market risks and their controls.** Rug or sudden collapse (High): position near 7%. Oversized positions (High): risk 0.5–1% per trade, daily limit 5%, project stop −30%. Thin liquidity and slippage (Medium): under 1% of pool liquidity, 2% slippage cap. Late signal when copying wallets (Medium): measured at +30 s against a control group.
+4. **Market risks and their controls.** Rug or sudden collapse (High): position near 10%. Oversized positions (High): risk up to 2% per trade, daily limit 15% never above £30, project stop −30%. Thin liquidity and slippage (Medium): under 1% of pool liquidity, 2% slippage cap. Late signal when copying wallets (Medium): measured at +30 s against a control group.
 5. **Operational and money risks.** Bad or missing data (Medium); too few trades to conclude (High): no conclusion before 200+ signals; paid data that does not pay (Medium): month by month, two-month A/B test, capped research cost; key or wallet loss (Low now); UK tax and records (Low).
-6. **Rugs hit position size, not stop-losses.** After three rugs: 40% per trade −78%; 25% −58%; 7% −20%.
-7. **A 10-point win-rate swing flips the month.** 45% win rate +21%; 35% win rate −24% (assumptions in section 9).
+6. **Rugs hit position size, not stop-losses.** After three rugs: 40% per trade −78%; 25% −58%; 10% (your choice, preset B) −27%.
+7. **A 10-point win-rate swing flips the month.** At 7% (preset A) 45% win rate +21%, 35% win rate −24%; at your preset B (10%) +31% and −33% (assumptions in section 9).
 8. **A $69 tool needs a big month to pay for itself.** Return needed to cover $69: $200 capital 34.5%; $1,000 6.9%; $5,000 1.4%. 10× rule: $690 profit needs about $3,450 at 20% a month or $6,900 at 10%; out of reach at £500, so paid data is a capped research cost (about £100).
 9. **Staged spending about halves the worst case.** Upfront plan $1,690 (about £1,250) versus staged about £600.
 10. **The 12-month path, with a gate at every step.** Shadow test (months 0–3, £0); decision point (month 3); paper + data trial (months 3–5, about £100 on data); live first slice (months 5–6, £200, cap £500, stop −30%); scale in steps (months 6–12, £500 cap, up to £1,000 later).
@@ -338,10 +332,10 @@ not a restart; the watchdog task covers restarts.
 14. **What will ping you.** Section 6 above.
 15. **What you get, even if there is no edge.** Benefits: a £0 answer on whether the video's rules work; an audit trail; a reusable log (wallet-copy plugs in); a measured basis for any paid tool. Limits: no edge guaranteed; copied wallets arrive late; free-tier limits may hide tokens; dev-wallet and LP-lock checks not built.
 16. **What to expect, and when.** Section 5 above.
-17. **The money path by slice size, in pounds.** The slice table in section 5, plus the step-up rule.
-18. **Hard rules the code enforces.** Section 9 above.
-19. **Adapting: three risk presets for a £200 slice.** Section 9b table. What changes (daily limit £10 to £30 in B and C; bigger positions scale wins and losses equally) and what does not (the −30% project stop, £60; in the 35% case B and C reach it inside the month).
+17. **The money path by slice size, in pounds.** The slice table in section 5 (with daily limit column), plus the step-up rule and the note that from £350 one full loss exceeds £30.
+18. **Hard rules the code enforces.** Section 9 above (10% position, up to 2% risk, 15% daily limit never above £30, −30% project stop, one position, no keys).
+19. **You chose preset B: £20 a position, £30 a day.** Section 9b table with B highlighted. What changes (daily limit £10 to £30 in B and C; bigger positions scale wins and losses equally) and what does not (the −30% project stop, £60; in the 35% case B and C reach it inside the month).
 20. **Is this the right strategy? What the evidence says.** Section 9b strategy table, plus: I found nothing that beats the shadow test for this budget; tolerating bigger losses does not create an edge.
-21. **What we are adapting, and what is decided.** Daily loss accepted £10 to up to £30 (you choose A, B or C); position £14 to £20 or £30 (you choose); project stop unchanged; paid data £100 up front to the ladder (decided); alerts: weekly Telegram notice added (built); strategy unchanged (decided). One decision from you: A, B or C by 9 Nov.
+21. **What we are adapting, and what is decided.** Daily loss accepted £10 to £30, a fixed pound cap (decided: B, applied); position £14 to £20 (decided: B, applied); project stop unchanged; paid data £100 up front to the ladder (decided); alerts: weekly Telegram notice added (built); strategy unchanged (decided). Decided 28 Oct; from £350 up, one full loss exceeds £30, so re-decide before each step-up.
 22. **Where things stand today.** Section 10 above.
 23. **Do this now.** Section 2 above.

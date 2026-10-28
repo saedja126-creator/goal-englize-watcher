@@ -115,12 +115,10 @@ free first, then Birdeye Pro for month 1, then Nansen Pro for month 2 only if mo
 ## 9d. Loss tolerance and strategy check (28 Oct)
 The user asked how fast the live slice could be lost and how volatile memecoins are, then said: "I don't want smaller wins... I don't mind if I
 lost up to 30 pound in one day... is it the right way? Search the internet." Answer: a bigger tolerance changes size, not edge. Three presets for a
-£200 slice (A 7% position / 5% daily limit, B 10% / 15% = £30, C 15% / 15% = £30; project stop stays −30% = £60). B is my lean. The user has
-**not yet chosen**. The web search found nothing that clearly beats a free shadow test (retail day trading mostly loses; memecoin wallets mostly lose;
+£200 slice (A 7% position / 5% daily limit, B 10% / 15% = £30, C 15% / 15% = £30; project stop stays −30% = £60). B is my lean. The user **chose B on 28 Oct** ("$20 is my go-to", read as £20 a position) and it is applied, with a fixed £30 cap on the daily limit. The web search found nothing that clearly beats a free shadow test (retail day trading mostly loses; memecoin wallets mostly lose;
 staking and USDC lending pay about 4–7% a year). Details: `MASTER_PLAN.md` section 9b; slides 19–21.
 
 ## 10. Pending decisions and unanswered questions
-0. **Choose risk preset A, B or C** (MASTER_PLAN section 9b) by 9 Nov.
 1. Run the update on the PC and send back `python -m shadowbot status` and the Test A section of `report`.
 2. Send the three book titles (or cover photos).
 3. Free source for the Spy wallet list (nothing chosen).

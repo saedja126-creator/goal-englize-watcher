@@ -21,6 +21,11 @@ CREATE TABLE IF NOT EXISTS trades(
 """
 
 
+def daily_limit_gbp(base_equity: float, r: dict) -> float:
+    """Daily loss limit in pounds: the percentage rule, never above the pound cap."""
+    return min(base_equity * r["daily_loss_limit_pct"] / 100, r.get("daily_loss_limit_gbp_max", float("inf")))
+
+
 def limits_table(cfg: dict) -> list[dict]:
     """The slice table: the same numbers as the presentation, from the settings file."""
     r = cfg["risk"]
@@ -32,7 +37,7 @@ def limits_table(cfg: dict) -> list[dict]:
             "slice": s,
             "per_trade": s * r["position_pct"] / 100,
             "project_stop": s * r["project_stop_pct"] / 100,
-            "daily_limit": s * r["daily_loss_limit_pct"] / 100,
+            "daily_limit": daily_limit_gbp(s, r),
             "good_low": s * lo / 100, "good_high": s * hi / 100,
             "range_low": s * rlo / 100, "range_high": s * rhi / 100,
         })
@@ -134,7 +139,7 @@ class RiskEngine:
         eq = self.s["equity"]
         if eq <= self.s["slice_start_equity"] * (1 - self.r["project_stop_pct"] / 100):
             self.s["halted"] = "PROJECT_STOP"
-        elif eq <= self.s["day_start_equity"] * (1 - self.r["daily_loss_limit_pct"] / 100):
+        elif eq <= self.s["day_start_equity"] - daily_limit_gbp(self.s["day_start_equity"], self.r):
             self.s["halted"] = "DAILY_LOSS"
         if self.s["halted"]:
             self._event(self.s["halted"], f"equity {eq:.2f}", now)
