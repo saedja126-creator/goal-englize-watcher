@@ -34,7 +34,11 @@ You only need a free Helius key. Paste it into the `.env` file yourself when ask
    output and the files in `samples/`.** The parsers were written without live access to these APIs, so this is the
    step that confirms them.
 6. Start the shadow run: `python -m shadowbot run` (leave it running; turn off computer sleep).
-7. Any time: `python -m shadowbot report` (or `--hours 24`). It also writes `reports/latest.md`.
+7. **Weekly report (the one to read):** every Sunday evening (UTC) the running scanner writes `reports/weekly-DATE.html`.
+   Open it in your browser. You can also make one any time with `python -m shadowbot weekly` (add `--end 2026-11-08`
+   for a specific week). It has a plain-English summary, a day-by-day table, a this-week vs last-week scorecard and a
+   progress-to-the-gates tracker.
+8. For the technical view at any time: `python -m shadowbot report` (or `--hours 24`). It writes `reports/latest.md`.
 
 Run the tests anytime: `python -m unittest discover -s tests -v`.
 

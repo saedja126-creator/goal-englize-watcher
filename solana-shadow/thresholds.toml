@@ -65,3 +65,8 @@ friction_pct = 4.0            # assumed round-trip cost (slippage + fees) deduct
 min_reject_rate = 0.50        # warn if fewer than this share of evaluated tokens is rejected
 max_reject_rate = 0.98        # warn if more than this (filter may be broken or data missing)
 min_signals_for_conclusion = 100
+
+[weekly]
+min_n_per_week = 20           # signals and controls needed in a week before it counts as "positive" or "not positive"
+target_signals = 200          # signals wanted before moving from shadow to paper trading
+test_weeks = 12               # planned length of the shadow phase (about 3 months)
