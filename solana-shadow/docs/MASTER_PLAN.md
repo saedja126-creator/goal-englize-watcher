@@ -16,12 +16,15 @@ when it starts, and how it is paid.
 | Thing | Where |
 |---|---|
 | Code, tests, docs | GitHub repo `saedja126-creator/goal-englize-watcher`, branch `claude/solana-shadow`, folder `solana-shadow/` |
-| The presentation (20 slides) | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 (private; opens and can be edited from the same claude.ai account; a chat on that account can read and update it by this URL) |
+| The presentation (23 slides) | https://claude.ai/artifact/3U9QE1hLhyzLipnj3b4t44 (private; opens and can be edited from the same claude.ai account; a chat on that account can read and update it by this URL) |
 | Offline copy of the presentation | `solana-shadow/docs/Shadow_Desk_presentation.html` (open in a browser; arrow keys; Ctrl+P, Save as PDF) |
+| Presentation source files | `solana-shadow/docs/presentation-source/` (deck.json + one HTML file per slide + builder; see its README) |
+| **Start here for a new Claude Code session** | `solana-shadow/docs/FINAL_SUMMARY.md` |
 | Other documents | `docs/PROJECT_SUMMARY.md` (what is built), `docs/CONVERSATION_SUMMARY.md` (how we got here), `docs/PLAN.md` (shorter plan) |
 
 **Moving the presentation:** an artifact cannot be copied to another account. Within the same account the link above is enough: any
-chat can read it and update it. Appendix A of this file also holds every slide's content as text, so it can be recreated anywhere.
+chat can read it and update it. `docs/presentation-source/` holds the slide files, so it can also be recreated from the repo on any account, and Appendix A
+holds every slide's content as text.
 
 **Rules for any assistant using this file:**
 1. Never promise or imply returns. The most likely outcome of a first version is flat to negative after costs.
@@ -50,7 +53,7 @@ chat can read it and update it. Appendix A of this file also holds every slide's
 | **By Fri 30 Oct** | *Optional:* set up Telegram alerts (steps in section 6) | You with Claude Code | A test message arrives on your phone |
 | **Sun 1 Nov, evening UTC** | First weekly report arrives (week 1, Mon 26 Oct to Sun 1 Nov). Expect "too early to conclude" | The scanner | `reports/weekly-2026-11-01.html` exists (and a Telegram notice if set up) |
 | **Mon 2 Nov** | Send the headline lines of the report to the assistant for a plain-English explanation | You | Explained |
-| **By Mon 9 Nov** | Send: the three book titles (or cover photos); confirm the free wallet list for the Spy strategy (GMGN rankings); confirm the £500 live cap with £200 first; give the live GBP/USD rate for `usd_per_gbp` in `thresholds.toml` | You | All four answered |
+| **By Mon 9 Nov** | Pick the risk preset A, B or C (section 9b); send: the three book titles (or cover photos); confirm the free wallet list for the Spy strategy (GMGN rankings); confirm the £500 live cap with £200 first; give the live GBP/USD rate for `usd_per_gbp` in `thresholds.toml` | You | All four answered |
 | **9 Nov to 6 Dec** | Build the Spy strategy in shadow mode | Assistant | Spy rows appear in the weekly report |
 
 **What to expect in the first weeks:** week 1 is plumbing only (is it running, error rates, how many tokens it sees). No conclusion
@@ -204,9 +207,9 @@ liquidity at +30 s, +5 min, +15 min, +1 h.
 
 | Rule | Value |
 |---|---|
-| Biggest position | about 7% of the slice, and under 1% of the pool's liquidity |
+| Biggest position | about 7% of the slice (preset A, the current code default; B is 10%, C is 15%: see 9b), and under 1% of the pool's liquidity |
 | Risk per trade | 0.5–1% of the slice at the stop |
-| Daily loss limit | about 5%: the desk halts until you reset it |
+| Daily loss limit | about 5% (preset A, the current code default): the desk halts until you reset it. Presets B and C raise it to 15% (£30): see 9b |
 | Project stop | −30% of the live slice: live trading halts |
 | Positions at once | one |
 | Halts | persist across restarts and new days until a person resets them |
@@ -217,6 +220,44 @@ rugs in a row: 40% per trade = −78%; 25% = −58%; 7% = −20%.
 
 **Why win rate matters:** with a 14% stop, 30% average win, 7% position, 5 trades a day and 4% friction, a 45% win rate gives about +21% a
 month and a 35% win rate about −24%. A 10-point swing flips the month. 100 trades only pins a win rate to about ±10 points.
+
+### 9b. ADAPTATION (28 Oct): you can accept up to £30 loss in a day
+
+The user said: "I don't want smaller wins. I don't mind if I lost up to 30 pound in one day." That is a **tolerance**, not an edge. Larger
+positions make wins and losses bigger in the same proportion; only the win rate decides which one dominates. Three presets for a £200 slice
+(slice grows with the ladder; percentages stay the same):
+
+| Preset | One position | Risk per trade | Daily limit | Rugs to hit daily limit | Rugs to hit the −£60 project stop | Month at 45% / 35% win rate |
+|---|---|---|---|---|---|---|
+| **A** (current code) | 7% = £14 | 1% | 5% = £10 | 1 | 5 | +21% / −24% |
+| **B** (my lean) | 10% = £20 | 2% | 15% = £30 | 2 | 3 | +31% / −33% |
+| **C** | 15% = £30 | 2.5% | 15% = £30 | 1 | 2 | +50% / −45% |
+
+- Month figures use the same assumptions as section 9 (14% stop, 30% average win, 5 trades a day, 4% friction). Illustrative, not forecasts.
+- The −30% project stop (£60) is the same in every preset. In the 35% case B and C reach it inside the month and the desk halts.
+- Rug counts follow the code: a limit triggers when equity is at or below the limit, so exactly £60 of losses trips the project stop. (An earlier chat
+  message said 4 and 3 for B and C; the code rule gives 3 and 2.)
+- **Status: the user has not chosen.** Nothing live is affected until about 29 Mar 2027.
+- **When the user chooses**, change `[risk]` in `thresholds.toml` and tell the user what changed:
+
+| Preset | position_pct | risk_per_trade_pct | daily_loss_limit_pct | project_stop_pct |
+|---|---|---|---|---|
+| A | 7 | 1.0 | 5 | 30 |
+| B | 10 | 2.0 | 15 | 30 |
+| C | 15 | 2.5 | 15 | 30 |
+
+  `tests/test_risk.py` assumes the 5% daily limit (for example, a −£10 day on £200 trips DAILY_LOSS), so B or C needs those tests updated.
+  Then regenerate the slice table (`python -m shadowbot slices`) and update section 5 and slides 17–18.
+
+**Strategy check (28 Oct, from web search; figures are third-party and unverified):** I found nothing that beats testing for free first.
+
+| Option | What the evidence shows | Verdict |
+|---|---|---|
+| Active retail day trading | Large studies: most lose; under 1% persistently profitable in Taiwan; about 97% of persistent day traders lost money in Brazil | Base rate is poor |
+| Memecoin wallets | Industry reports: most wallets lose | Same warning, higher speed |
+| Grid and DCA bots | Modest, mostly vendor-reported; they lose in a trending fall | Unproven |
+| Staking and USDC lending | About 5–7% and 4–6% a year in October 2026 snapshots; smart-contract and platform risk | Safer, slow |
+
 
 ---
 
@@ -239,6 +280,7 @@ the holder check, and added the watchdog. **Nobody has yet reviewed the collecte
 | Telegram yes or no | 30 Oct | Decides whether weekly and alert pings reach your phone |
 | Three book titles or cover photos | 9 Nov | Chapters on scam tokens, position sizing and on-chain wallet analysis help most |
 | Free wallet list for Spy (GMGN rankings) | 9 Nov | The Spy build starts that day |
+| **Risk preset A, B or C** (section 9b; my lean B) | 9 Nov | Sets position size and the daily loss limit |
 | £500 cap, £200 first | 9 Nov | Sets the risk limits |
 | Live GBP/USD rate | 9 Nov | Used for the liquidity cap |
 | Which single question the paid data answers | 26 Jan 2027 | Default: does a paid wallet list beat the free one for Spy? |
@@ -298,5 +340,8 @@ not a restart; the watchdog task covers restarts.
 16. **What to expect, and when.** Section 5 above.
 17. **The money path by slice size, in pounds.** The slice table in section 5, plus the step-up rule.
 18. **Hard rules the code enforces.** Section 9 above.
-19. **Where things stand today.** Section 10 above.
-20. **Do this now.** Section 2 above.
+19. **Adapting: three risk presets for a £200 slice.** Section 9b table. What changes (daily limit £10 to £30 in B and C; bigger positions scale wins and losses equally) and what does not (the −30% project stop, £60; in the 35% case B and C reach it inside the month).
+20. **Is this the right strategy? What the evidence says.** Section 9b strategy table, plus: I found nothing that beats the shadow test for this budget; tolerating bigger losses does not create an edge.
+21. **What we are adapting, and what is decided.** Daily loss accepted £10 to up to £30 (you choose A, B or C); position £14 to £20 or £30 (you choose); project stop unchanged; paid data £100 up front to the ladder (decided); alerts: weekly Telegram notice added (built); strategy unchanged (decided). One decision from you: A, B or C by 9 Nov.
+22. **Where things stand today.** Section 10 above.
+23. **Do this now.** Section 2 above.

@@ -1,0 +1,31 @@
+<section id="controls" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">Hard rules the code enforces</h2>
+<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px">
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Position size</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 7% of the account per trade, capped near 1% of pool liquidity.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Risk per trade</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">0.5–1% of the account at the stop.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#6FB1F0">Daily loss limit</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">About 5%. The desk halts and waits for you.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">Project stop</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">Live trading halts if the live slice falls 30%: £60 on £200, £150 on £500.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">One position at a time</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">No new scan while a position is open.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#17263D;border:1px solid #2A3C58;border-radius:16px;padding:32px">
+<h3 style="font-size:32px;font-weight:700;color:#F28C38">No keys in the bot</h3>
+<p style="font-size:28px;line-height:1.4;color:#E1E7F0">Shadow mode has no wallet. Later: a separate burner wallet.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">All values are proposals, tuned from shadow data. No model can override them.</p>
+<aside>These limits live in code, not in a prompt, so nothing can talk the system out of them. The blue cards limit how much any single trade can cost. The orange cards limit how much the whole project can lose.</aside>
+</section>

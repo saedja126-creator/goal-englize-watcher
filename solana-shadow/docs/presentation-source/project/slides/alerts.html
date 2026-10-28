@@ -1,0 +1,15 @@
+<section id="alerts" data-transition="fade" style="background:#0F1B2D;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:64px;font-weight:700;line-height:1.15;color:#F6F4EE">What will ping you</h2>
+<table style="font-size:26px;color:#F6F4EE;font-family:'Public Sans', Arial, sans-serif">
+<tr style="background:#2A3C58"><th style="width:44%;color:#F6F4EE;text-align:left;font-weight:700">Event</th><th style="width:32%;color:#F6F4EE;text-align:left;font-weight:700">Where</th><th style="width:24%;color:#F6F4EE;text-align:left;font-weight:700">Status</th></tr>
+<tr style="background:#17263D"><td style="width:44%">Scanner down and not restarted</td><td style="width:32%">PC pop-up and Telegram</td><td style="width:24%;color:#6FB1F0">Built</td></tr>
+<tr style="background:#122035"><td style="width:44%">Scanner back up</td><td style="width:32%">Telegram</td><td style="width:24%;color:#6FB1F0">Built</td></tr>
+<tr style="background:#17263D"><td style="width:44%">Weekly report ready, 3-line summary</td><td style="width:32%">Telegram, plus the file</td><td style="width:24%;color:#6FB1F0">Built, needs update</td></tr>
+<tr style="background:#122035"><td style="width:44%">Key dates: decision, buy, cancel</td><td style="width:32%">Calendar reminders</td><td style="width:24%;color:#F28C38">Not set up</td></tr>
+<tr style="background:#17263D"><td style="width:44%">Daily loss limit or project stop hit</td><td style="width:32%">Telegram and PC pop-up</td><td style="width:24%;color:#F28C38">Not built yet</td></tr>
+<tr style="background:#122035"><td style="width:44%">Daily updates</td><td style="width:32%">None, by your choice</td><td style="width:24%;color:#C6D2E2">n/a</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4;color:#E1E7F0">Telegram needs a bot token and chat id in your .env file. Never paste them into a chat. Alerts are optional.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#A9B6C8">The weekly Telegram notice is new: it works after you update the code and restart the scanner.</p>
+<aside>What will and will not ping you. Today the watchdog alerts you if the scanner dies and cannot be restarted, and tells you when it is back. The weekly report always arrives as a file on Sunday evening. The Telegram notice that the report is ready is new and needs the code update and a restart of the scanner. Calendar reminders for key dates and an alert for the loss limits are not set up yet. There are no daily updates, as you asked.</aside>
+</section>

@@ -1,5 +1,7 @@
 # Solana shadow desk: instructions for a local Claude Code session
 
+> **Current state and plan: read `docs/FINAL_SUMMARY.md` first.** The setup steps below were written before the real-sample check; the summary is newer (56 tests, watchdog, weekly Telegram notice, risk presets awaiting the user's choice).
+
 You are running on the user's own PC, with normal internet access. A previous cloud session wrote this project but
 could NOT reach the market-data APIs, so the parsers are untested against real responses. Your job is to finish setup,
 verify against real data, and start the shadow run.
