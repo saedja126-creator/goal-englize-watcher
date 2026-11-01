@@ -208,16 +208,20 @@ class TestPersistence(unittest.TestCase):
             "dexscreener": [dex_pair(mint)],
         })
         stats = run_cycle(self.db, http, FakeRpc(), CFG, now=NOW, log=lambda *_: None)
-        self.assertEqual((stats["new"], stats["evaluated"], stats["decisions"]), (1, 1, 1))
+        self.assertEqual((stats["new"], stats["evaluated"]), (1, 0))  # waits for the minimum age first
+        first_check = NOW + CFG["stage1_free_cut"]["min_age_minutes"] * 60
+        http.routes["geckoterminal"] = {"data": []}
+        stats = run_cycle(self.db, http, FakeRpc(), CFG, now=first_check, log=lambda *_: None)
+        self.assertEqual((stats["new"], stats["evaluated"], stats["decisions"]), (0, 1, 1))
         d = self.db.conn.execute("SELECT * FROM decisions").fetchone()
         self.assertEqual((d["decision"], d["check_fired"]), ("SIGNAL", "new_pair_flow"))
         f = json.loads(d["features"])
         self.assertIn("onchain", f)
         self.assertEqual(self.db.conn.execute("SELECT COUNT(*) c FROM outcomes").fetchone()["c"], 4)
         # outcomes come due: price up 20% at +5m, gone at +60m
-        later = NOW + 3601
+        later = first_check + 3601
         http.routes["dexscreener"] = [dex_pair(mint, priceUsd="0.0012")]
-        tracker.run_due(self.db, http, CFG, NOW + 301)
+        tracker.run_due(self.db, http, CFG, first_check + 301)
         http.routes["dexscreener"] = []
         tracker.run_due(self.db, http, CFG, later)
         statuses = {r["offset_s"]: r["status"] for r in self.db.conn.execute("SELECT * FROM outcomes")}
@@ -232,6 +236,29 @@ class TestPersistence(unittest.TestCase):
         http = FakeHttp({"geckoterminal": ApiError("down", 500), "dexscreener": [dex_pair("MintB")]})
         stats = run_cycle(self.db, http, FakeRpc(), CFG, now=NOW, log=lambda *_: None)
         self.assertEqual(stats["evaluated"], 1)
+
+    def test_newest_pool_is_evaluated_first_when_over_the_cap(self):
+        import copy
+        cfg = copy.deepcopy(CFG)
+        cfg["scan"]["max_evals_per_cycle"] = 1
+        self.db.add_pool_if_new("OldMint", "poolOld", "OLD", NOW - 3000)
+        self.db.add_pool_if_new("NewMint", "poolNew", "NEW", NOW - 200)
+        http = FakeHttp({"geckoterminal": ApiError("down", 500), "dexscreener": [dex_pair("OldMint"), dex_pair("NewMint")]})
+        stats = run_cycle(self.db, http, FakeRpc(), cfg, now=NOW, log=lambda *_: None)
+        self.assertEqual(stats["evaluated"], 1)
+        self.assertEqual({r["mint"] for r in self.db.conn.execute("SELECT mint FROM decisions")}, {"NewMint"})
+        self.assertEqual(stats["backlog"], 1)  # the old one still waits, behind the fresh one
+
+    def test_pools_past_the_watch_age_are_retired_without_a_check(self):
+        watch_s = CFG["scan"]["watch_max_age_minutes"] * 60
+        self.db.add_pool_if_new("StaleMint", "poolStale", "OLD", NOW - watch_s - 60)
+        self.db.add_pool_if_new("FreshMint", "poolFresh", "NEW", NOW - 300)
+        http = FakeHttp({"geckoterminal": ApiError("down", 500), "dexscreener": [dex_pair("StaleMint"), dex_pair("FreshMint")]})
+        stats = run_cycle(self.db, http, FakeRpc(), CFG, now=NOW, log=lambda *_: None)
+        self.assertEqual(stats["expired"], 1)
+        status = {r["mint"]: r["status"] for r in self.db.conn.execute("SELECT mint, status FROM pools")}
+        self.assertEqual(status["StaleMint"], "DONE")
+        self.assertEqual(self.db.conn.execute("SELECT COUNT(*) c FROM decisions WHERE mint='StaleMint'").fetchone()["c"], 0)
 
     def test_api_calls_are_logged_without_secrets(self):
         import requests

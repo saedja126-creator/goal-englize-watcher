@@ -76,13 +76,16 @@ def run_cycle(db, http, rpc, cfg: dict, now: int | None = None, log=print) -> di
             may_fetch_more=lambda: db.source_calls_since("gecko", now - 60) < GECKO_SOFT_LIMIT_PER_MIN)
         stats.update(info)
         stats["discovered"] = len(found)
-        fresh = sum(1 for d in found if db.add_pool_if_new(d["mint"], d["pair_address"], d["symbol"], now))
+        # First check waits for the minimum age: checking a brand-new pool only gets TOO_YOUNG and wastes a slot.
+        first_check_in = cfg["stage1_free_cut"]["min_age_minutes"] * 60
+        fresh = sum(1 for d in found if db.add_pool_if_new(d["mint"], d["pair_address"], d["symbol"], now, first_check_in))
         stats["new"] = fresh
         overlap = (len(found) - fresh) / len(found) if found else None
     except ApiError as exc:
         log(f"[discovery] failed: {exc}")
 
-    # 2. evaluate pools whose bench has expired
+    # 2. evaluate pools whose bench has expired (newest first; pools past the watch age are retired unchecked)
+    stats["expired"] = db.expire_stale(now - cfg["scan"]["watch_max_age_minutes"] * 60)
     due = db.due_pools(now, cfg["scan"]["max_evals_per_cycle"])
     if due:
         mints = [p["mint"] for p in due]
@@ -110,6 +113,8 @@ def run_cycle(db, http, rpc, cfg: dict, now: int | None = None, log=print) -> di
                     v = funnel.evaluate(pool["mint"], f, ctx, cfg)
                 stats["decisions"] += apply_verdict(db, pool, f, v, now, cfg)
                 stats["evaluated"] += 1
+
+    stats["backlog"] = db.due_count(now)
 
     # 3. outcome checkpoints
     stats["outcomes"] = tracker.run_due(db, http, cfg, now)

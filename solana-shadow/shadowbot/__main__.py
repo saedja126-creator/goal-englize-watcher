@@ -61,7 +61,8 @@ def cmd_run(args) -> int:
             try:
                 s = run_cycle(db, http, rpc, cfg, log=say)
                 say(f"discovered {s['discovered']} new {s['new']} evaluated {s['evaluated']} "
-                    f"decisions {s['decisions']} outcomes {s['outcomes']} pages {s['pages']}")
+                    f"decisions {s['decisions']} outcomes {s['outcomes']} pages {s['pages']} "
+                    f"backlog {s['backlog']} retired {s['expired']}")
                 discovery_log.append(int(started), s)
             except Exception as exc:  # keep the desk alive; the error is logged, not hidden
                 say(f"[cycle error] {scrub(repr(exc))}")
@@ -226,6 +227,39 @@ def cmd_compare(args) -> int:
     return 0
 
 
+def cmd_nightdesk(args) -> int:
+    """Night Desk v1: a second, separate PAPER layer. Own settings, own database; never touches shadow.db."""
+    from . import nightdesk
+    config.load_env()
+    cfg = nightdesk.load_settings()
+    if args.action == "watch":
+        return nightdesk.watch()
+    if args.action == "once":
+        return nightdesk.watch(once=True)
+    if args.action == "start":
+        ok, msg = nightdesk.start()
+        print(msg)
+        return 0 if ok else 1
+    if args.action == "stop":
+        ok, msg = nightdesk.stop()
+        print(msg)
+        return 0 if ok else 1
+    db = nightdesk.DeskDB(start_equity=cfg["desk"]["start_equity_usd"])
+    try:
+        text = nightdesk.build_report(db, cfg) if args.action == "report" else nightdesk.build_status(db, cfg)
+        if args.action == "report":
+            config.REPORTS_DIR.mkdir(exist_ok=True)
+            out = config.REPORTS_DIR / f"nightdesk-report-{time.strftime('%Y%m%d-%H%M')}.md"
+            out.write_text(text, encoding="utf-8")
+            print(text)
+            print(f"Saved: {out}")
+        else:
+            print(text)
+    finally:
+        db.close()
+    return 0
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="shadowbot", description="Shadow-mode Solana scanner. Never trades.")
     p.add_argument("--db", help="path to the SQLite file (default data/shadow.db)")
@@ -251,7 +285,12 @@ def main(argv=None) -> int:
     cp.add_argument("--hours", type=float, default=3.0, help="how long to collect before reporting (default 3)")
     cp.add_argument("--poll", type=int, default=20, help="seconds between Jupiter calls (default 20)")
     cp.add_argument("--report", action="store_true", help="report on what was already collected; make no new calls to Jupiter")
+    nd = sub.add_parser("nightdesk", help="Night Desk v1: second, separate paper layer (own settings and database)")
+    nd.add_argument("action", choices=["watch", "once", "start", "stop", "status", "report"],
+                    help="watch = run in this window, once = one cycle, start/stop = background, status/report = print the dashboard")
     args = p.parse_args(argv)
+    if args.cmd == "nightdesk":
+        return cmd_nightdesk(args)
     if args.cmd == "compare":
         return cmd_compare(args)
     if args.cmd == "watch":

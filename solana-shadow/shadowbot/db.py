@@ -75,10 +75,11 @@ class DB:
         self.conn.commit()
 
     # ---- pools -------------------------------------------------------
-    def add_pool_if_new(self, mint: str, pair_address: str | None, symbol: str | None, now: int) -> bool:
+    def add_pool_if_new(self, mint: str, pair_address: str | None, symbol: str | None, now: int,
+                        first_eval_delay_s: int = 0) -> bool:
         cur = self.conn.execute(
             "INSERT OR IGNORE INTO pools(mint, pair_address, symbol, first_seen_ts, next_eval_ts) VALUES(?,?,?,?,?)",
-            (mint, pair_address, symbol, now, now),
+            (mint, pair_address, symbol, now, now + first_eval_delay_s),
         )
         self.conn.commit()
         return cur.rowcount == 1
@@ -91,10 +92,20 @@ class DB:
         return int(row["n"])
 
     def due_pools(self, now: int, limit: int) -> list[sqlite3.Row]:
+        # Newest first: the strategies only care about young tokens, so under load the oldest wait, not the freshest.
         return self.conn.execute(
-            "SELECT * FROM pools WHERE status='WATCH' AND next_eval_ts<=? ORDER BY next_eval_ts LIMIT ?",
+            "SELECT * FROM pools WHERE status='WATCH' AND next_eval_ts<=? ORDER BY first_seen_ts DESC LIMIT ?",
             (now, limit),
         ).fetchall()
+
+    def expire_stale(self, first_seen_before: int) -> int:
+        """Stop watching pools first seen before the cutoff. A token's real age is never below its time since first seen."""
+        cur = self.conn.execute("UPDATE pools SET status='DONE' WHERE status='WATCH' AND first_seen_ts<?", (first_seen_before,))
+        self.conn.commit()
+        return cur.rowcount
+
+    def due_count(self, now: int) -> int:
+        return int(self.conn.execute("SELECT COUNT(*) AS n FROM pools WHERE status='WATCH' AND next_eval_ts<=?", (now,)).fetchone()["n"])
 
     def update_pool(self, mint: str, *, next_eval_ts: int, status: str, last_decision: str | None, last_check: str | None,
                     symbol: str | None = None) -> None:
