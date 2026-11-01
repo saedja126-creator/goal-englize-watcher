@@ -217,12 +217,29 @@ handoff_goal_englize/
   artifacts/                  the exact published HTML (planners and download pages)
   exports/ineos|como|tenhag/  finished MP4 and PNG files
   source/                     all builders, content files, capture scripts, tests
+  sources/                    the full Esk article (word for word)
   reference/old_planner_format.html   your original planner (font, CSS, icons, motion script)
   private_photos/             your photos (raw). Not for any public repo.
   .gitignore                  ignores photos, artifacts, exports and the reference file
 ```
 
 **Git note:** only `SUMMARY.md`, `source/` and `.gitignore` are committed to the repo. `reference/old_planner_format.html` (it embeds photos), `artifacts/`, `exports/` and `private_photos/` are only in the zip. Keep the zip: the builders in `source/` need `reference/old_planner_format.html` at `../reference/`.
+
+---
+
+## 8b. Source material: what is in this bundle and what is not
+
+| Source | In the bundle? | Where |
+|---|---|---|
+| The Esk, "The Analysis Series", Paul Quinn, 1 Nov 2026 (Man Utd relegation scenario) | **Yes, full text, word for word** | `sources/the_esk_man_utd_relegation_scenario.md` |
+| Your 9-slide Gemini-style Man Utd draft | No (see the contradiction table in section 6; the draft text is only in your chat message) | re-paste it if you want it kept |
+| INEOS research report (Arabic) | **No full text.** The exact report sentences used on each slide are in the INEOS planner under "From the report". | `artifacts/ineos_carousel_plan.html` |
+| Ten Hag article, Como v Man Utd article | **No full text.** The sentences used are in their planners. | `artifacts/ten_hag_carousel_plan.html`, `artifacts/como_man_utd_carousel_plan.html` |
+| Your Gemini 9-slide INEOS copy | Final adjusted copy is in section 5 | n/a |
+
+I could not read the raw chat record (the permission check blocked it), so only text I still had in front of me was saved. If you need the INEOS, Ten Hag or Como articles in full in a new chat, paste them again or copy them from your original messages.
+
+The Esk article is third-party text. `sources/` is in `.gitignore`, so it is only in the zip, not in the public repo.
 
 ---
 
