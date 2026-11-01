@@ -1,0 +1,5 @@
+# These hold your own photos (raw or embedded). Do not push to a public repo.
+private_photos/
+artifacts/
+exports/
+reference/old_planner_format.html
