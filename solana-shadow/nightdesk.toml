@@ -1,0 +1,45 @@
+# NIGHT DESK v1: settings for the second, separate paper layer. Rules copied from the Grok prompt Saed pasted on 29 Oct 2026.
+# FROZEN on creation. Changing a value means the Night Desk test restarts. Lines marked ASSUMPTION fill a gap in that prompt.
+# This file is separate from thresholds.toml. Nothing here changes the main scanner, its risk settings or shadow.db.
+
+[desk]
+name = "Night Desk v1"
+paper_only = true                  # there is no live mode in this code at all
+start_equity_usd = 150.0
+position_pct_of_equity = 8.0       # ASSUMPTION: the prompt says both "max risk 8%" and "size at 8% of equity"; the sizing line is used
+max_open_positions = 1
+friction_pct = 4.0                 # ASSUMPTION: round-trip slippage and fees, same value as the main report; half on entry, half on exit
+hard_stop_pct = 6.0
+trail_activate_pct = 12.0
+trail_pct = 6.0
+data_lost_minutes = 15             # ASSUMPTION: no price for this long closes the paper trade as a total loss (conservative)
+
+[scout]
+allowed_dex = ["pumpswap", "pumpfun", "raydium", "raydium-clmm", "raydium-cp"]   # ASSUMPTION: "Pump.fun + Raydium" mapped to these GeckoTerminal dex ids
+min_age_minutes = 30
+max_age_minutes = 4320             # 72 hours
+min_mcap_usd = 300000
+max_mcap_usd = 20000000
+sane_max_mcap_usd = 100000000000   # ASSUMPTION: anything above this is bad data and is skipped
+trending_durations = ["1h", "6h", "24h"]   # ASSUMPTION: the free source GeckoTerminal "trending pools", one call per duration
+
+[filter]
+min_liquidity_usd = 40000
+min_volume_h1_usd = 50000
+max_top10_pct = 25                 # top 10 holders, known pool accounts excluded
+max_dev_pct = 3
+max_bundled_pct = 10               # ASSUMPTION: proxy = share of supply held by RugCheck "insider networks"
+max_pump_h1_pct = 80               # kill if price is up this much or more in the last hour
+min_lp_locked_pct = 50             # ASSUMPTION: "burned or locked" means RugCheck lpLockedPct at least this
+
+[analyst]
+pass_score = 70
+min_components = 4                 # ASSUMPTION: need at least this many of the 6 scoring inputs, else the token is skipped for incomplete data
+# Scoring formulas are fixed in docs/NIGHT_DESK_V1_RULES.md. Holder growth and smart-wallet activity are not available from free sources.
+
+[loop]
+iteration_seconds = 30
+discovery_seconds = 180            # three GeckoTerminal calls every 3 minutes, about 1 a minute, to stay well inside the shared free limit
+reeval_minutes = 30                # a token is re-judged at most this often
+rugcheck_per_cycle = 6             # most RugCheck lookups (2 calls each) per discovery cycle
+bench_offsets_seconds = [900, 3600]   # benchmark: what every judged token did 15 minutes and 1 hour later

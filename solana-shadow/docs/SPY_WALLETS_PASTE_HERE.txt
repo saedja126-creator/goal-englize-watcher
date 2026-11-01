@@ -1,0 +1,55 @@
+SPY WALLET LIST (DRAFT). Public addresses only. Never a private key or seed phrase.
+One wallet per line: the FULL address, then a space, then the number of trades GMGN shows for the last 30 days.
+Aim for 20 to 30 wallets. Skip any wallet with fewer than 30 trades in 30 days, or hundreds of trades a day (a bot).
+Delete these instruction lines if you like. Lines starting with # are ignored.
+
+# example line (not a real wallet):
+# 9xExampleFullAddressGoesHereAbCdEfGhIjKlMnOpQrStUvWx 54
+
+# Batch 1, received 29 Oct from Saed, screened on-chain 29 Oct (read-only). RESULT: 0 of 8 clean passes. Do not use as the final list.
+# pwZpq97vcUqG5r79PMYJ2rPdJeVfuqdTaxmNvj5KYMR  BOT-LIKE: 5,000+ tx in 14 days, 42% failed
+# CWryqL8F79bCUPfRMnFHxXpJEyW5TixWe59hEuFXWYnD  BOT-LIKE: 5,000+ tx in 11 days, mostly sells of 5 tokens
+# F5EhA1gJVTNhS43bbxQjLb8uGM5WW5kBRzNuRmF2T1db  BOT-LIKE: about 130 tx a day, only sells of 1 token in sample
+# yHCxHBEaJW5tbndqC8JciSThr7U1cqLpdcsvHcx6PRe   BOT-LIKE: 5,000+ tx in 30 days, 23 sells of 2 tokens
+# GeBJSHK4WsGrz2HRvTbqvWGx4JRMpHfJG2ikzrYBDuwR  UNCLEAR: 424 tx in 30 days (human-like), but sample is only sells of 1 token, no buys
+# CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o  NO: 4,999 of 5,000 tx failed, 1 day of activity
+# BQVz7fQ1WsQmSTMY3umdPEPPTm1sdcBcX9sP7o6kPRmB  NO: 4,754 of 5,000 tx failed, 1 day of activity
+# 39j2aaXEQhVq7Jur5Wy9XpYqnat7TY5rJL9fLL8NfVU9  BOT-LIKE: 5,000+ tx in 17 days, 4 tokens in sample
+
+# Batch 2, read by Claude from gmgn.ai/discover (Solana, 30D, All tab, 55 wallets) on 29 Oct, then screened on-chain.
+# 22 had GMGN buys of 30 to 1,500 in 30 days. Screening rule (PROPOSED, not yet approved): 30 to 1,500 tx in 30 days, under 20% failed,
+# active 10+ days, active in last 48h, 5+ swaps and 3+ different tokens bought in the 30 most recent txs. RESULT: 3 of 22 pass.
+# PASSED the screen (not yet judged on profit; 7tkP and CFkd look suspiciously alike, possibly one operator, so count as ONE until checked):
+7tkPWE2cZ3uQncuiF9DzpAdR7YLSG2Q14M8cjZMCaAqr 1309
+5x8tfrJSn4Pt5gjQEMWDnoLvAzZ8rgJVTXiTpcwhbxmN 1360
+CFkdHRybyzwFffHcjMAkzZmWBtxV5PjwofDNWge8tjG3 1304
+# Near misses: 5zV5iXB54RmCoVV5B5MfmiD14NhbxRXRgtsEBcw4yn1y (1,774 tx, otherwise fine); HVWZxaTiFDz1KuzFyQuqSSLiEfD5gyhCi6V7pbQpA888 (150 tx, but bought only 1 token)
+# The other 17 failed: too many transactions (often 5,000+) or mostly failed transactions (bot behaviour).
+
+# Batch 3, 29 Oct: ALL GMGN discover tabs x 1D/7D/30D read by Claude = 547 wallets. Removed 30 already screened and 248 with over 50 GMGN trades a day -> 269.
+# Quick on-chain screen (1 call each): 61 bot volume, 58 mostly failed, 79 too little history, 23 quiet, 48 survived. Full screen of the 48: 20 PASS.
+# All 20 addresses below were cross-checked against the GMGN page data (exact match). Trade counts are on-chain transactions in 30 days.
+# Source tab in brackets. Profit is NOT checked yet. Rule is still a PROPOSAL.
+84vL38o5zTQjvA2fv7f3MgwXVBm8rBs1QBVXHtranQy5 211 [All, Smart Money, KOL]
+CzeYKKJJNakBSqPP4i9AQ5GvmFZvTmkWwwfUj1zVYtYV 948 [All]
+77Uy6sLLggDg9ZB7Yu7xbtCShVTVvJsVNrPdyQFjLVD5 667 [All]
+BAdJW3mmxSP77hvWmHXSXRQsgspmFn1LVnTh7d148bru 130 [All]
+tmdStKtueEqdeAa4kiy1MWXk1Wsj4AbdDZ6dasBFDUo 48 [All]
+4bSUHKxBpr4cshfqbPBLaW57Hz7eyhU9DixZjQumGfDD 402 [Launchpad SM]
+J8N8cW3ADBpuwNxRChmnxAfmbmdiyBZiAsp6UKNtKxuc 987 [Smart Money, KOL]
+Hsu75uJhEidV5Zkj21XBEYUBaFZmjb8Rd6qUpweWGbTo 1040 [Smart Money, KOL]
+8n9tnbCAbnqHhotzibKEtzMpv1eeXCy9LyXKboZgUYB1 728 [Smart Money, KOL]
+C32NsZNdQrrnJkNkHJUZCeP2XPgj5kPQgaXk5s1bssCb 475 [Smart Money, KOL]
+5dXRP54f4n2va9v4to9nTdKXzospsabG26gUd6cUGtpE 1101 [Smart Money, KOL]
+EvWaM15DxLaUijPuyCrpmqCZQtaJMDdeeAqryYbCuScF 548 [Smart Money, KOL]
+C7bFqgUrJ1EE4fNAmuSeqvU6VnaCEYnPg2agAWUVV2fF 1070 [Smart Money, KOL]
+AfGjJQkv61nL8sNHSyd4KwNaY8X7aaZoLifu8PBfSuAH 162 [Smart Money, KOL]
+DDsFBzcBTydDSyc3ZiuSyQuSfWxYEzwQBfxdUFMNk91M 379 [Smart Money, KOL]
+rnmpJGT2Dc8MNswrEPnbncbiVRQ7uQoSKjnbNK6WRBB 1319 [Smart Money, KOL]
+HFLX1GnxUw9Y3DYXFZMTrSc2p65zH3eFysW2k2YSm8Q1 932 [Smart Money, KOL]
+ArfVe1K5gt5zsxzRCWSQeWc1rJSJjZzuuYxmvRh71mMQ 95 [Top Tracked, Top Renamed]
+# These 2 passed the activity screen but came ONLY from GMGN's "Top Dev" tab (token creators, not ordinary traders). Recommend NOT using:
+# HdNUXNqPRP6WhnHNQwKGGvGqPGHSk5okoV17RZAkW43r 77 [Top Dev]
+# 26oK69pYx7R25ULts9hLYF2HpTnZ421jPYMPsds9GtYA 146 [Top Dev]
+# TOTAL if approved: 18 (batch 3) + 3 (batch 2, 7tkP and CFkd counted as one operator) = 20 distinct wallets.
+
