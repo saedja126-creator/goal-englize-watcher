@@ -692,7 +692,8 @@ def stop() -> tuple[bool, str]:
             pass
         return False, "No Night Desk is running."
     if os.name == "nt":
-        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True,
+                       creationflags=subprocess.CREATE_NO_WINDOW)
     else:
         import signal
         os.kill(pid, signal.SIGTERM)

@@ -11,7 +11,7 @@ import statistics as st
 from datetime import date, datetime, timedelta, timezone
 
 from . import discovery_log
-from .report import _outcome_rows, _pct, _table
+from .report import _outcome_rows, _pct, _table, forward_return, summarize_returns
 
 DAY = 86400
 
@@ -29,16 +29,10 @@ def _verdicts(db, since: int, until: int) -> dict:
             "rejected": sum(1 for r in rows if not r["p"] and r["f"])}
 
 
-def _returns(db, since: int, until: int, where: str, params: tuple, offset: int) -> list[float]:
+def _returns(db, cfg: dict, since: int, until: int, where: str, params: tuple, offset: int) -> list[tuple[float, bool]]:
+    """(return, dead) per outcome; a pool that lost its liquidity or vanished counts as a total loss."""
     rows = _outcome_rows(db, since, f"{where} AND d.ts<?", (*params, until), offset)
-    out = []
-    for x in rows:
-        if x["status"] != "done" or not x["p1"]:
-            continue
-        entry = x["pe"] or x["p0"]
-        if entry:
-            out.append(x["p1"] / entry - 1)
-    return out
+    return [r for r in (forward_return(x, cfg) for x in rows) if r is not None]
 
 
 def _rug(db, cfg: dict, since: int, until: int, where: str) -> tuple[int, int, int]:
@@ -58,18 +52,22 @@ def _rug(db, cfg: dict, since: int, until: int, where: str) -> tuple[int, int, i
 
 def edge(db, cfg: dict, since: int, until: int) -> dict:
     friction = cfg["report"]["friction_pct"] / 100.0
-    sig = _returns(db, since, until, "d.decision='SIGNAL'", (), 900)
-    ctl = _returns(db, since, until, "d.decision='PASS'", (), 900)
-    s_after = st.mean(sig) - friction if sig else None
-    c_after = st.mean(ctl) - friction if ctl else None
+    sig = _returns(db, cfg, since, until, "d.decision='SIGNAL'", (), 900)
+    ctl = _returns(db, cfg, since, until, "d.decision='PASS'", (), 900)
+    s = summarize_returns(sig, friction) if sig else None
+    c = summarize_returns(ctl, friction) if ctl else None
     need = cfg["weekly"]["min_n_per_week"]
     if len(sig) < need or len(ctl) < need:
         label = "Too few"
-    elif s_after > 0 and s_after > c_after:
-        label = "Positive"
+    elif s["median"] > 0 and s["median"] > c["median"] and s["mean_ex_top"] > 0:
+        label = "Positive"  # typical result positive after costs, beats the control, and not carried by a few winners
     else:
         label = "Not positive"
-    return {"label": label, "n_signal": len(sig), "n_control": len(ctl), "signal_after": s_after, "control_after": c_after}
+    # signal_after / control_after are the MEDIAN results after friction (dead pools counted as total losses)
+    return {"label": label, "n_signal": len(sig), "n_control": len(ctl),
+            "signal_after": s["median"] if s else None, "control_after": c["median"] if c else None,
+            "signal_mean_ex_top": s["mean_ex_top"] if s else None, "signal_dead": s["dead"] if s else None,
+            "control_mean_ex_top": c["mean_ex_top"] if c else None, "control_dead": c["dead"] if c else None}
 
 
 def period(db, cfg: dict, since: int, until: int, now: int) -> dict:
@@ -175,11 +173,16 @@ def reading(data: dict, cfg: dict) -> list[str]:
         out.append(f"Entry signals: not enough data to compare against the control group yet "
                    f"({e['n_signal']} signals and {e['n_control']} controls with a 15-minute result).")
     elif e["label"] == "Positive":
-        out.append(f"Entry signals are ahead of the control group after costs ({_pct(e['signal_after'])} vs "
-                   f"{_pct(e['control_after'])} at 15 minutes). Keep watching: one good stretch proves nothing.")
+        out.append(f"Entry signals are ahead of the control group after costs: typical result {_pct(e['signal_after'])} "
+                   f"vs {_pct(e['control_after'])} at 15 minutes. Keep watching: one good stretch proves nothing.")
     else:
-        out.append(f"Entry signals are not beating the control group after costs ({_pct(e['signal_after'])} vs "
-                   f"{_pct(e['control_after'])} at 15 minutes).")
+        out.append(f"Entry signals are not showing an edge after costs: typical result {_pct(e['signal_after'])} "
+                   f"(control {_pct(e['control_after'])}) at 15 minutes.")
+    if e["label"] != "Too few" and e.get("signal_dead") is not None and e["signal_dead"] >= 0.25:
+        out.append(f"{_pct(e['signal_dead'], 0)} of signals (control: {_pct(e['control_dead'], 0)}) had lost their liquidity "
+                   "or vanished by minute 15. They are counted as a total loss, because their last price cannot be sold at. "
+                   f"Average result without the best 1% of winners: {_pct(e['signal_mean_ex_top'])} "
+                   f"(control {_pct(e['control_mean_ex_top'])}).")
     if len(out) == 0:
         out.append("Nothing unusual this week.")
     return out
@@ -231,7 +234,7 @@ def _disc_cell(d: dict, key: str) -> str:
 def _edge_cell(e: dict) -> str:
     if e["label"] == "Too few":
         return f"Too few ({e['n_signal']}/{e['n_control']})"
-    return f"{e['label']} ({_pct(e['signal_after'])} vs {_pct(e['control_after'])})"
+    return f"{e['label']} (typical {_pct(e['signal_after'])} vs control {_pct(e['control_after'])})"
 
 
 def _title(data: dict) -> str:

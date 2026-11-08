@@ -26,6 +26,13 @@ class TestPidAndLog(unittest.TestCase):
             self.assertIn("No background scanner", msg)
             self.assertFalse(background.pid_file().exists())  # stale file is cleaned up
 
+    def test_liveness_check_starts_no_helper_program(self):
+        # On Windows a helper like `tasklist` run from the window-less scheduled task flashes a console window.
+        with mock.patch("subprocess.run", side_effect=AssertionError("no helper program may be started")), \
+                mock.patch("subprocess.Popen", side_effect=AssertionError("no helper program may be started")):
+            self.assertTrue(background.is_alive(os.getpid()))
+            self.assertFalse(background.is_alive(999999))
+
     def test_a_second_scanner_cannot_claim_the_pid(self):
         with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"SHADOWBOT_DATA_DIR": tmp}):
             background.pid_file().write_text(str(os.getppid()))  # another live process

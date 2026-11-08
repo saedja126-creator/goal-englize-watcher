@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from shadowbot import config  # noqa: E402
 from shadowbot.__main__ import main  # noqa: E402
 from shadowbot.db import DB  # noqa: E402
-from shadowbot.weekly import build_weekly, collect, gate_lines, reading  # noqa: E402
+from shadowbot.weekly import build_weekly, collect, edge, gate_lines, reading  # noqa: E402
 
 CFG = config.load_thresholds()
 END = date(2026, 11, 8)  # a Sunday
@@ -89,6 +89,33 @@ class TestWeekly(unittest.TestCase):
         self.assertEqual(e["label"], "Positive")
         self.assertAlmostEqual(e["signal_after"], 0.16, places=3)
         self.assertAlmostEqual(e["control_after"], 0.01, places=3)
+
+    def test_dead_pools_count_as_total_loss_not_as_their_stale_price(self):
+        # 18 of 30 signals lost all liquidity but still show a "+20%" last quote; 12 are alive at +20%.
+        db = DB(":memory:")
+        self.addCleanup(db.close)
+        up = {30: (1.0, 20000), 300: (1.1, 20000), 900: (1.2, 20000), 3600: (1.2, 20000)}
+        dead = {**up, 900: (1.2, 0), 3600: (1.2, 0)}
+        for i in range(30):
+            add(db, D1 + i, f"sig{i}", "SIGNAL", "new_pair_flow", "S4_STRATEGY", dead if i < 18 else up)
+            add(db, D1 + 100 + i, f"ctl{i}", "PASS", None, "S4_STRATEGY",
+                {30: (1.0, 20000), 300: (1.02, 20000), 900: (1.05, 20000), 3600: (1.0, 20000)})
+        e = edge(db, CFG, D1_START, D1_START + 86400)
+        self.assertEqual(e["label"], "Not positive")  # the old average would have said Positive
+        self.assertAlmostEqual(e["signal_dead"], 0.6)
+        self.assertAlmostEqual(e["signal_after"], -1.0, places=3)  # typical signal = total loss (cannot pass -100%)
+        self.assertLess(e["signal_mean_ex_top"], 0)
+
+    def test_pool_that_vanished_counts_as_total_loss(self):
+        db = DB(":memory:")
+        self.addCleanup(db.close)
+        gone = {30: (1.0, 20000), 300: (1.1, 20000), 900: None, 3600: None}  # None = DexScreener no longer returns it
+        for i in range(30):
+            add(db, D1 + i, f"sig{i}", "SIGNAL", "new_pair_flow", "S4_STRATEGY", gone)
+            add(db, D1 + 100 + i, f"ctl{i}", "PASS", None, "S4_STRATEGY", gone)
+        e = edge(db, CFG, D1_START, D1_START + 86400)
+        self.assertEqual((e["n_signal"], e["signal_dead"]), (30, 1.0))
+        self.assertEqual(e["label"], "Not positive")
 
     def test_rug_rates_separate_filtered_from_passed(self):
         w = self.data["week"]

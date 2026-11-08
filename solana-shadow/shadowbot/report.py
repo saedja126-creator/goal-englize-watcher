@@ -97,6 +97,36 @@ def _outcome_rows(db, since: int, decision_where: str, params: tuple, offset: in
             WHERE d.ts>=? AND {decision_where}""", (offset, since, *params)).fetchall()
 
 
+def forward_return(x, cfg):
+    """(return, dead) for one outcome row, or None if it cannot be judged.
+
+    A pool that lost its liquidity (same rule as the rug check) or vanished from DexScreener is a TOTAL LOSS: its last
+    quote is a stale price nobody can sell at. Counting that quote as a gain is what made week 2 look positive."""
+    if x["status"] == "missing":
+        return -1.0, True
+    if x["status"] != "done":
+        return None
+    drop = cfg["tracking"]["rug_liquidity_drop"]
+    l0, l1 = x["l0"], x["l1"]
+    if l1 is not None and ((l0 and l1 < (1 - drop) * l0) or (not l0 and l1 == 0)):
+        return -1.0, True
+    entry = x["pe"] or x["p0"]  # +30s snapshot approximates entry delay
+    if not x["p1"] or not entry:
+        return None
+    return x["p1"] / entry - 1, False
+
+
+def summarize_returns(pairs: list[tuple[float, bool]], friction: float) -> dict:
+    """Typical (median) result, the average without the top 1% of winners, and how many pools died. All after friction.
+
+    A few absurd quotes can swamp a plain average, so the average here drops the best 1% (at least one)."""
+    vals = sorted(r for r, _ in pairs)
+    n = len(vals)
+    core = vals[:-max(1, n // 100)] if n > 1 else vals
+    return {"n": n, "dead": sum(1 for _, d in pairs if d) / n, "up": sum(1 for v in vals if v > 0) / n,
+            "median": max(-1.0, st.median(vals) - friction), "mean_ex_top": max(-1.0, st.mean(core) - friction)}  # a loss cannot pass -100%
+
+
 def test_b(db, cfg, since: int) -> str:
     t = cfg["tracking"]
     groups = [("PASS/SIGNAL", "d.decision IN ('PASS','SIGNAL')", ())]
@@ -142,22 +172,19 @@ def test_c(db, cfg, since: int) -> tuple[str, list[str]]:
     for label, where, params in groups:
         for off in (300, 900, 3600):
             data = _outcome_rows(db, since, where, params, off)
-            rets = []
-            for x in data:
-                if x["status"] != "done" or not x["p1"]:
-                    continue
-                entry = x["pe"] or x["p0"]  # +30s snapshot approximates entry delay
-                if entry:
-                    rets.append(x["p1"] / entry - 1)
-            if not rets:
+            pairs = [r for r in (forward_return(x, cfg) for x in data) if r is not None]
+            if not pairs:
                 continue
-            pos = sum(1 for r in rets if r > 0) / len(rets)
-            rows.append([label, f"+{off // 60}m", len(rets), _pct(st.mean(rets)), _pct(st.median(rets)), _pct(pos),
-                         _pct(st.mean(rets) - friction)])
+            s = summarize_returns(pairs, friction)
+            rows.append([label, f"+{off // 60}m", s["n"], _pct(s["dead"]), _pct(s["up"]), _pct(s["median"]),
+                         _pct(s["mean_ex_top"])])
     out = ["### Test C: signal edge (forward price moves, NOT a simulated exit strategy)",
-           _table(["group", "horizon", "n", "mean gross", "median gross", "% up", f"mean after {friction * 100:.0f}% friction"], rows),
-           "\nEntry price = the +30s snapshot after the decision (approximate delay). A signal beats the control "
-           "only if its after-friction mean is positive AND clearly above the control row."]
+           _table(["group", "horizon", "n", "dead pools", "% up", f"median after {friction * 100:.0f}% friction",
+                   f"mean after friction, best 1% left out"], rows),
+           "\nEntry price = the +30s snapshot after the decision (approximate delay). 'Dead pools' lost their liquidity "
+           "(or vanished) by that time and are counted as a total loss (-100%), not at their stale last price. "
+           "A signal beats the control only if its median after friction is positive AND above the control row, "
+           "and the mean without the best 1% is positive too."]
     need = cfg["report"]["min_signals_for_conclusion"]
     if n_signals < need:
         warnings.append(f"only {n_signals} signals logged; {need}+ needed before drawing conclusions "

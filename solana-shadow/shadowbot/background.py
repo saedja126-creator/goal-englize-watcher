@@ -58,8 +58,18 @@ def is_alive(pid: int) -> bool:
     if not pid or pid <= 0:
         return False
     if os.name == "nt":
-        out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True).stdout
-        return str(pid) in out
+        # Asked directly through Windows. Running `tasklist` from the window-less scheduled task flashed a console window.
+        import ctypes
+        k32 = ctypes.windll.kernel32
+        k32.OpenProcess.restype = ctypes.c_void_p
+        handle = k32.OpenProcess(0x1000, False, int(pid))  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return k32.GetLastError() == 5  # access denied: it exists; anything else: it does not
+        try:
+            code = ctypes.c_ulong()
+            return bool(k32.GetExitCodeProcess(ctypes.c_void_p(handle), ctypes.byref(code))) and code.value == 259  # STILL_ACTIVE
+        finally:
+            k32.CloseHandle(ctypes.c_void_p(handle))
     try:  # reap it if it is our own finished child, so it does not look alive as a zombie
         done, _ = os.waitpid(pid, os.WNOHANG)
         if done == pid:
@@ -125,7 +135,8 @@ def stop() -> tuple[bool, str]:
             pass
         return False, "No background scanner is running."
     if os.name == "nt":
-        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True)
+        subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True,
+                       creationflags=subprocess.CREATE_NO_WINDOW)
     else:
         os.kill(pid, signal.SIGTERM)
     for _ in range(40):
